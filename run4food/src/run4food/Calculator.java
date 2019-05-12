@@ -3,7 +3,8 @@ import java.util.Hashtable;
 
 
 public class Calculator {
-	
+	// Version 1.0, die Listen activity2calory, food2calory müssen noch erweitert werden
+	// die Formel für den Grundumsatz funktioniert nicht für "divers" wie sollen wir den Fall behandeln?
 
 	Hashtable<String, Double> activity2calory = new Hashtable<String, Double>();
 	Hashtable<String, Double> food2calory = new Hashtable<String, Double>();
@@ -16,6 +17,7 @@ public class Calculator {
 		activity2calory.put("Tischtennis", 5.3);
 		activity2calory.put("Fussball", 12.0);
 		// pro Gramm Quelle www.kalorientabelle.net
+		//wird noch erweitert
 		food2calory.put("Apfel", 0.52);
 		food2calory.put("Birne", 0.58);
 		food2calory.put("Käckebrot", 0.313);
@@ -26,17 +28,23 @@ public class Calculator {
 		
 	}
 	
-	double basalMetabolism(int age, double weight, double heigt, String gender) {
+	double basalMetabolism(int age, double weight, double height, String gender) {
 		
+		int s=0;
 		
+		if (gender.equals("female")) s=-161;
+		if (gender.equals("male")) s= 5;
 		
-		return 1500;
+		//Mifflin St. Jeor-Formel
+		return 10.0 * weight + 6.25 * height - 5.0 * age + s;
 	}
+	
 	
 	double steps2calory(int steps) {
-	
+	// habe diese "Faustformel" gefunden. Kennt jemand eine besssere?
 		return steps* 0.04;
 	}
+	
 	
 	double activity2calory(String activity, double duration, double weight) {
 		// Dauer in Stunden, Gewicht des Users in Kilogramm
