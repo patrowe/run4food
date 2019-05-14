@@ -1,6 +1,6 @@
 package gui;
 
-import Controller.UserManagementController;
+import controller.UserManagementController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
