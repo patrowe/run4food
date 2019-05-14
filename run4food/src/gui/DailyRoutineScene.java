@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import Controller.DailyRoutineController;
 import Controller.NegativeNumberException;
@@ -16,6 +16,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
 
 
 public class DailyRoutineScene {

@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import Controller.UserManagementController;
 import javafx.geometry.Insets;

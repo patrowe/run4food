@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,7 +11,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-public class GuestLoginScene {
+public class RegistrationScene {
 
     private Stage mainStage;
     private Scene registrationScene;
@@ -19,25 +19,32 @@ public class GuestLoginScene {
     private ScrollPane registrationScrollPane;
     private VBox registrationVBox;
     private HBox registrationHBox, name, street, place, gender, preferedFood, incompatibility, registrationButtons;
-    private Label registrationTitle, questionName, questionLiving, questionGender, questionPhone, questionAge, questionweight, questionHeight, questionPreferedFood, questionIncompatibility;
-    private TextField forename, surename, streetName, streetNumber, postcode, city, phone, age, weight, height;
+    private Label registrationTitle, questionNickname, questionName, questionLiving, questionGender, questionPhone, questionAge, questionweight, questionHeight, questionPreferedFood, questionIncompatibility;
+    private TextField nickname, forename, surename, streetName, streetNumber, postcode, city, phone, age, weight, height;
     private CheckBox gluten, wheat, lactose;
     private RadioButton veggie, vegan, eatAll, male, female, diverse;
     private ToggleGroup optionsPreferedFood, optionsGender;
     private Button registrationCancel, registrationSave;
     private MainMenuScene mainMenuScene;
 
-    GuestLoginScene(){
+    RegistrationScene(){
         mainMenuScene = new MainMenuScene();
     }
 
     public void setScene(Stage stage){
 
         mainStage = stage;
-        registrationTitle = new Label("Anmeldung als Gast");
+        registrationTitle = new Label("Registrierung");
         registrationTitle.setFont(Font.font("Calibri", FontWeight.THIN, 40));
         registrationTitle.setMinHeight(100);
         registrationTitle.setPadding(new Insets(10));
+
+        questionNickname = new Label("Wie soll ich dich nennen?");
+        questionNickname.setFont(Font.font("Calibri", 25));
+        questionNickname.setMinHeight(50);
+
+        nickname = new TextField("Nickname");
+        nickname.setFont(Font.font("Calibri", 20));
 
         questionName = new Label("Wie heißt du?");
         questionName.setFont(Font.font("Calibri", FontWeight.NORMAL, 25));
@@ -186,12 +193,12 @@ public class GuestLoginScene {
         registrationCancel = new Button("Abbrechen und zum Hauptmenü zurückkehren");
         registrationCancel.setFont(Font.font("Calibri", FontWeight.BOLD, 25));
 
-        registrationSave = new Button("Mit diesen Daten anmelden");
+        registrationSave = new Button("Profil speichern");
         registrationSave.setFont(Font.font("Calibri", FontWeight.BOLD, 25));
 
         registrationButtons = new HBox();
         registrationButtons.setAlignment(Pos.CENTER);
-        registrationButtons.setSpacing(50);
+        registrationButtons.setSpacing(10);
         registrationButtons.setMinHeight(75);
         registrationButtons.getChildren().addAll(registrationCancel, registrationSave);
 
@@ -200,7 +207,7 @@ public class GuestLoginScene {
         registrationVBox = new VBox();
         registrationVBox.setAlignment(Pos.CENTER);
         registrationVBox.setSpacing(10);
-        registrationVBox.getChildren().addAll(registrationTitle, questionName, name, questionLiving, street, place, questionPhone, phone, questionAge, age,
+        registrationVBox.getChildren().addAll(registrationTitle, questionNickname, nickname, questionName, name, questionLiving, street, place, questionPhone, phone, questionAge, age,
                 questionGender, gender, questionHeight, height, questionweight, weight, questionPreferedFood, preferedFood, questionIncompatibility, incompatibility);
 
         registrationHBox = new HBox();
@@ -223,6 +230,7 @@ public class GuestLoginScene {
         mainStage.setMaximized(false);
         mainStage.setMaximized(true);
 
+        // ActionListeners for the buttons
 
         registrationSave.setOnAction(actionEvent -> {
 

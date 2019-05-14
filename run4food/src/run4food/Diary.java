@@ -16,4 +16,6 @@ public class Diary {
 		stepDiary.put(d,step);
 	}
 	
+
+	
 }

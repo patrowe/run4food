@@ -5,23 +5,24 @@ import java.util.Date;
 import java.util.Hashtable;
 
 public class DailyRoutine {
-	// Version 1.1 under construction, not tested ;-)
+	// Version 1.2 under construction, not tested ;-)
 	
-	User activeUser;
-	Hashtable<Date, Double[]> activeDiary;
+	User user;
+	RegisteredUser regUser;
+	Hashtable<Date, Integer[]> activeDiary;
 	
 	Calculator calc = new Calculator();
 	
 	double earnedCalory, consumedCalory, freeCalory;
 	private Date today;
-	public Double[] diaryEntry;
+	public Integer[] diaryEntry;
 	
 			
-	DailyRoutine(User user){
-		activeUser = user;
-		activeDiary = user.getDiary();
-		today = new Date();
-		diaryEntry = new Double[5];
+	DailyRoutine(RegisteredUser regUser, Date date){
+		this.regUser = regUser;
+		activeDiary = regUser.getDiary();
+		today = date;
+		diaryEntry = new Integer[5];
 	}
 	
 	//hier müssen die Nutzereingaben übergeben werden.
@@ -34,7 +35,7 @@ public class DailyRoutine {
 	//hier müssen die Nutzereingaben übergeben werden.
 	public void calculateActivity(String activity, double duration) {
 
-		earnedCalory+=calc.activity2calory(activity, duration, activeUser.getWeight());
+		earnedCalory+=calc.activity2calory(activity, duration, regUser.getWeight());
 		
 	}
 	//hier müssen die Nutzereingaben übergeben werden.
@@ -43,10 +44,10 @@ public class DailyRoutine {
 		consumedCalory+=calc.food2calory(food, quantaty);
 		
 	}
-	//hier müssen die Nutzereingaben übergeben werden.
+	//hier werden die noch freien Kalorien für die Bestellung berechnet
 	public void setFreeCalory() {
 		
-		freeCalory = activeUser.getBasalMetabolism() + earnedCalory - consumedCalory;
+		freeCalory = regUser.getBasalMetabolism() + earnedCalory - consumedCalory;
 	
 	}
 	
@@ -57,15 +58,15 @@ public class DailyRoutine {
 	}
 	
 	public void updateDiary() {
-		
-		diaryEntry[0]=earnedCalory;
-		diaryEntry[1]=consumedCalory;
-		diaryEntry[2]=freeCalory;
-		diaryEntry[3]=activeUser.getWeight();
-		diaryEntry[4]=activeUser.getBasalMetabolism();
+		//Tagebucheintrag in der Reihenfolge earnedCalry/consumedCalory/freeCalory/Weight/BasalMetabolsim
+		diaryEntry[0]=(int)earnedCalory;
+		diaryEntry[1]=(int)consumedCalory;
+		diaryEntry[2]=(int)freeCalory;
+		diaryEntry[3]=(int)regUser.getWeight();
+		diaryEntry[4]=(int)regUser.getBasalMetabolism();
 		
 		// hier kann noch eine Abfrage kommen, ob für "heute" schon ein Eintrag besteht
-		activeUser.setDiary(today, diaryEntry);
+		regUser.setDiary(today, diaryEntry);
 		
 	}
 	
