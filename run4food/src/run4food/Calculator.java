@@ -6,26 +6,13 @@ public class Calculator {
 	// Version 1.0, die Listen activity2calory, food2calory müssen noch erweitert werden
 	// die Formel für den Grundumsatz funktioniert nicht für "divers" wie sollen wir den Fall behandeln?
 
-	Hashtable<String, Double> activity2calory = new Hashtable<String, Double>();
-	Hashtable<String, Double> food2calory = new Hashtable<String, Double>();
+	private Hashtable<String, Double> activity2calory;
+	private Hashtable<String, Double> food2calory;
+	private Lexicon lexicon = new Lexicon();
 	
 	Calculator(){
-		//Quelle www.sportunterricht.ch
-		activity2calory.put("Schwimmen", 7.0);
-		activity2calory.put("Radfahren 15 km/h", 7.5);
-		activity2calory.put("Laufen 14 km/h", 11.5);
-		activity2calory.put("Tischtennis", 5.3);
-		activity2calory.put("Fussball", 12.0);
-		// pro Gramm Quelle www.kalorientabelle.net
-		//wird noch erweitert
-		food2calory.put("Apfel", 0.52);
-		food2calory.put("Birne", 0.58);
-		food2calory.put("Käckebrot", 0.313);
-		food2calory.put("Toastbrot", 0.238);
-		food2calory.put("Vollkornbrot", 0.212);
-
-
-		
+		activity2calory = lexicon.getActivity2calory();
+		food2calory = lexicon.getFood2calory();
 	}
 	
 	double basalMetabolism(int age, double weight, double height, String gender) {
