@@ -1,4 +1,4 @@
-package Profil;
+package run4food;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -10,135 +10,92 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserManagement implements Serializable {
-	private File f = new File("alles.bin"); // Dateiname wo die Profile gespeichert werden
-	private File t = new File("l12.bin");
+	private File f = new File("AldProf.bin"); // Dateiname wo die Profile gespeichert werden
+
+	ArrayList<RegisteredUser> profile_list = new ArrayList<RegisteredUser>();
+	public List<RegisteredUser> p_list;
+	Object test = new Object();
+	
 	ObjectOutputStream oos;
-	AppendingObjectOutputStream aoos;
-	RegisteredUser test = new RegisteredUser();
+	
+	// AppendingObjectOutputStream aoos;
+	// RegisteredUser test = new RegisteredUser();
 
 	public UserManagement() {
 		try {
-			if (f.exists()) // wenn Datei schon existiert wird der Header nicht überschrieben ->
-							// AppendingObjectOutputStream
-				this.aoos = new AppendingObjectOutputStream(new FileOutputStream(f, true));
-			else // Datei existiert noch nicht -> neu anlegen
-				this.oos = new ObjectOutputStream(new FileOutputStream(f, true));
+			this.oos = new ObjectOutputStream(new FileOutputStream(f, true));
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public void saveUser(RegisteredUser user) throws Exception {
 
-		System.out.println(user.getForename());
+		System.out.println(user.getFirstname());
 		// neuer Benutzer wird in Datei geschrieben
 
-		FileOutputStream fos = new FileOutputStream(f, true);
+		FileOutputStream fos = new FileOutputStream(f);
 		BufferedOutputStream bus = new BufferedOutputStream(fos);
-		AppendingObjectOutputStream aoos = new AppendingObjectOutputStream(bus);
-		aoos.writeObject(user);
-		aoos.reset();
-		aoos.close();
+		this.oos = new ObjectOutputStream(bus);
+		this.profile_list.add(user);
+		this.oos.writeObject(profile_list);
+		this.oos.writeObject(p_list);
+		this.oos.reset();
+		this.oos.close();
 
 	}
 
-	protected RegisteredUser loadUser(String name) throws Exception { // momentan werden einfach alle Profile als
-																		// Objekte eingelesen undin Arraylist
-																		// gespeichert
-		int zaehl = 0;
-		// declaring ArrayList
-		ArrayList<RegisteredUser> profil_liste = new ArrayList<RegisteredUser>();
-		boolean list_check = true;
-		// declaring ObjectInputStream
+	
+	public ArrayList<RegisteredUser> loadListe() throws Exception { // komplette Liste aller Nutzer, vielleicht nötig
+		
 		try {
+			
 			ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(f));
-			while (list_check) {
-				RegisteredUser userRead = (RegisteredUser) objectInputStream.readObject();
-				if (userRead != null)
-					profil_liste.add(userRead);
-				else
-					list_check = false;
-			}
+			ArrayList<RegisteredUser> userRead = new	ArrayList<RegisteredUser>();
+			userRead = (ArrayList<RegisteredUser>) objectInputStream.readObject();
+			objectInputStream.close(); 
+				return userRead;
+			
 		} catch (Exception e) {
 			System.out.println("Fehler/Ende beim lesen der Profilliste!");
+			return null;
 		}
-
-		for (int i = 0; i < profil_liste.size(); i++) { // Ausgabe der Arraylist zur Überprüfung
-			System.out.println("Vorname: " + profil_liste.get(i).getForename() + " Nachname: "
-					+ profil_liste.get(i).getSurname() + " UserId: " + profil_liste.get(i).getUserId());
-			if (profil_liste.get(i).getSurname() == name)
-				return profil_liste.get(i);
-		}
-
-		/*while (!profil_liste.get(zaehl).getSurname().equals(name)) { // index für gesuchten Nutzer wird in der
-																		// Arrayliste ermittelt
-			zaehl++;
-		} */
-		return profil_liste.get(0);
-
-	}
-
-	protected ArrayList<RegisteredUser> loadListe() throws Exception { // komplette Liste aller Nutzer, vielleicht nötig
-																		// aber nicht im Klasendiagramm
-		// benutzt um user zu löschen
-
-// declaring ArrayList
-		ArrayList<RegisteredUser> profil_liste = new ArrayList<RegisteredUser>();
-		boolean list_check = true;
-// declaring ObjectInputStream
-		try {
-			ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(f));
-			while (list_check) {
-				RegisteredUser userRead = (RegisteredUser) objectInputStream.readObject();
-				if (userRead != null)
-					profil_liste.add(userRead);
-				else
-					list_check = false;
-			}
-		} catch (Exception e) {
-			System.out.println("Fehler/Ende beim lesen der Profilliste!");
-		}
-		return profil_liste;
+		
 	}
 
 	protected void deleteUser(String name) throws Exception {
 		int i = 0;
 		ArrayList<RegisteredUser> profile = this.loadListe();
-		for (int a = 0; a < profile.size(); a++) 
-		{
-			if (profile.get(a).getSurname() == name)
-				i=a;
+		System.out.println("sdfsdfsdfsdf" +profile.size());
+		System.out.println("i  " + i);
+		for (int a = 0; a < profile.size(); a++) {
+			System.out.println("a  " + a);
+			if (profile.get(a).getSurname().equals(name))
+				i = a;
 		}
-		/*	while (!profile.get(i).getSurname().equals(name)) { // index für gesuchten Nutzer wird in der
-			// Arrayliste ermittelt
-			i++;
-		}*/
-		
-		System.out.println("Gesuchter Index zum löschen" +i);
-		
-		profile.remove(i); // gesuchtes Profil wird aus arraylist gelöscht
-		
-		
-		FileOutputStream fos = new FileOutputStream(f);
-		for(int y = 0; y< profile.size();y++)
-		{
-			System.out.println("del User "+ profile.get(y).getForename());
-			
-			BufferedOutputStream bus = new BufferedOutputStream(fos);
-			ObjectOutputStream oos = new ObjectOutputStream(bus);
-			oos.writeObject(profile.get(y));
-			oos.reset();
-			oos.close();
-			fos = new FileOutputStream(f,true);
-		}
-		fos.close();
-		//oos.reset();
-		//oos.close();
+		System.out.println("i  " + i);
+		/*
+		 * while (!profile.get(i).getSurname().equals(name)) { // index für gesuchten
+		 * Nutzer wird in der // Arrayliste ermittelt i++; }
+		 */
 
+		System.out.println("Gesuchter Index zum löschen" + i);
+
+		profile.remove(i); // gesuchtes Profil wird aus arraylist gelöscht
+		FileOutputStream fos = new FileOutputStream(f);
+		BufferedOutputStream bus = new BufferedOutputStream(fos);
+		this.oos = new ObjectOutputStream(bus);
+		
+		this.oos.writeObject(profile);
+		this.oos.reset();
+		this.oos.close();
 	}
 
 }
