@@ -1,7 +1,5 @@
 package run4food;
 
-import java.util.Date;
-import java.util.Hashtable;
 
 public class User {
 	private String surname;
@@ -83,6 +81,7 @@ public class User {
 	public void setBasalMetabolism(int bm) {
 		this.basalMetabolism = bm;
 	}
+	
 	public int getBasalMetabolism() {
 		
 		return basalMetabolism;

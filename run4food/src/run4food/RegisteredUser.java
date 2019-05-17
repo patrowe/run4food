@@ -1,12 +1,11 @@
 package run4food;
 
-import java.util.Date;
 import java.util.Hashtable;
 
 public class RegisteredUser extends User{
 	
 	public String userId;
-	private Hashtable<Date, Integer[]> diary;
+	private Hashtable<String, Integer[]> diary;
 	
 	public void setUserId (String id){
 		this.userId = id;
@@ -21,11 +20,11 @@ public class RegisteredUser extends User{
 	}
 	
 	
-	public void setDiary(Date date, Integer[] value) {
+	public void setDiary(String date, Integer[] value) {
 		diary.put(date, value);
 	}
 	
-	public Hashtable<Date, Integer[]> getDiary(){
+	public Hashtable<String, Integer[]> getDiary(){
 		return diary;
 	}
 }
