@@ -8,94 +8,101 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
-public class UserManagement implements Serializable {
+/**
+*
+* @author Dennis Liebelt 
+* 		  	Die Klasse UserManagement ermoeglicht die Verwaltung der Profile. Dies beeinhaltet das Erstellen eines neuen Benutzers, 
+* 			das Verändern eines Profils, das Laden und das Löschen. 
+*/
+
+
+public class UserManagement {
 	private File f = new File("AldProf.bin"); // Dateiname wo die Profile gespeichert werden
-
 	ArrayList<RegisteredUser> profile_list = new ArrayList<RegisteredUser>();
-	public List<RegisteredUser> p_list;
-	Object test = new Object();
-	
 	ObjectOutputStream oos;
-	
-	// AppendingObjectOutputStream aoos;
-	// RegisteredUser test = new RegisteredUser();
 
-	public UserManagement() {
-		try {
-			this.oos = new ObjectOutputStream(new FileOutputStream(f, true));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
+	/**
+	 * @author Dennis Liebelt
+	 * @param user - Profil vom Typ RegisteredUser  
+	 */
 	public void saveUser(RegisteredUser user) throws Exception {
 
-		System.out.println(user.getFirstname());
-		// neuer Benutzer wird in Datei geschrieben
-
-		FileOutputStream fos = new FileOutputStream(f);
-		BufferedOutputStream bus = new BufferedOutputStream(fos);
-		this.oos = new ObjectOutputStream(bus);
+		// neuer Benutzer wird Liste hinzugefügt und in Datei geschrieben
 		this.profile_list.add(user);
-		this.oos.writeObject(profile_list);
-		this.oos.writeObject(p_list);
-		this.oos.reset();
-		this.oos.close();
+		this.writeFile(profile_list);
 
 	}
 
-	
-	public ArrayList<RegisteredUser> loadListe() throws Exception { // komplette Liste aller Nutzer, vielleicht nötig
-		
+	/**
+	 * @author Dennis Liebelt
+	 * @return Arraylist<RegisteredUser> - enthaelt alle Profile
+	 */
+	public ArrayList<RegisteredUser> loadListe() throws Exception { 
+
 		try {
-			
+			//ObjectInputStream wird geoeffnet und in ArrayList<RegisteredUser> gespeichert
 			ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(f));
-			ArrayList<RegisteredUser> userRead = new	ArrayList<RegisteredUser>();
-			userRead = (ArrayList<RegisteredUser>) objectInputStream.readObject();
-			objectInputStream.close(); 
-				return userRead;
-			
+			ArrayList<RegisteredUser> userRead = new ArrayList<RegisteredUser>();
+			userRead = (ArrayList<RegisteredUser>) objectInputStream.readObject(); //type safety: vielleicht instanceof testen
+			objectInputStream.close();
+			return userRead;
+
 		} catch (Exception e) {
 			System.out.println("Fehler/Ende beim lesen der Profilliste!");
 			return null;
 		}
-		
+
 	}
 
+	/**
+	 * @author Dennis Liebelt
+	 * @param String name - UserId des gesuchten Profiles
+	 */
+	
 	protected void deleteUser(String name) throws Exception {
-		int i = 0;
-		ArrayList<RegisteredUser> profile = this.loadListe();
-		System.out.println("sdfsdfsdfsdf" +profile.size());
-		System.out.println("i  " + i);
-		for (int a = 0; a < profile.size(); a++) {
-			System.out.println("a  " + a);
-			if (profile.get(a).getSurname().equals(name))
-				i = a;
+		//liste wird geladen, index zum loeschen ermittelt, geloescht und erneut in File geschrieben
+		this.profile_list = this.loadListe();
+		for (int a = 0; a < this.profile_list.size(); a++) {
+			if (this.profile_list.get(a).getUserId().equals(name))
+				this.profile_list.remove(a); // gesuchtes Profil wird aus arraylist gelöscht
+
 		}
-		System.out.println("i  " + i);
-		/*
-		 * while (!profile.get(i).getSurname().equals(name)) { // index für gesuchten
-		 * Nutzer wird in der // Arrayliste ermittelt i++; }
-		 */
 
-		System.out.println("Gesuchter Index zum löschen" + i);
+		this.writeFile(this.profile_list);
+	}
 
-		profile.remove(i); // gesuchtes Profil wird aus arraylist gelöscht
+	/**
+	 * @author Dennis Liebelt
+	 * @param RegisteredUser user - geaendertes Profil
+	 */
+	
+	protected void updateUser(RegisteredUser user) throws Exception {
+		//liste wird geladen, gesuchtes Profil zum updaten ermittelt, altes Profil rausgenommen und neues reingeschrieben
+		this.profile_list  = this.loadListe();
+		for (int i = 0; i < this.profile_list.size(); i++) {
+			if (this.profile_list.get(i).getUserId().equals(user.getUserId())) {
+				this.profile_list.remove(i);
+				this.profile_list.add(user);
+			}
+		}
+
+		this.writeFile(this.profile_list);
+	}
+
+	/**
+	 * @author Dennis Liebelt
+	 * @param ArrayList<RegisteredUser> profile - Profilliste die als File geschrieben werden soll
+	 */
+	protected void writeFile(ArrayList<RegisteredUser> profile) throws Exception {
+		//File wird geschrieben
 		FileOutputStream fos = new FileOutputStream(f);
 		BufferedOutputStream bus = new BufferedOutputStream(fos);
 		this.oos = new ObjectOutputStream(bus);
-		
 		this.oos.writeObject(profile);
 		this.oos.reset();
 		this.oos.close();
 	}
-
 }
