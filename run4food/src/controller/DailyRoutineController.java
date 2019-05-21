@@ -25,20 +25,11 @@ public class DailyRoutineController {
         //dailyRoutine.calculateActivity(activity, durationHours, durationMintues);
     }
 
-    public void caloriesTest(String s) throws FieldIsEmptyException, NegativeNumberException {
-        int i;
-        if(s.isEmpty()){
-            throw new FieldIsEmptyException("Ausgewählte Felder dürfen nicht leer sein!");
+    public void testOneNumber(int a) throws NoSenseException {
+        if(a==0){
+            throw new NoSenseException("Du musst eine Zahl über Null eingeben, damit die Kalorien berechnet werden");
         }
-        try {
-            i = Integer.parseInt(s);
-        }catch(NumberFormatException e) {
-            e.getMessage();
-            throw new NumberFormatException("Hier dürfen nur Zahlen eingegeben werden!");
-        }
-        if(i < 1){
-            throw new NegativeNumberException("Ungültige Zahl! Es sind nur positive Zahlen über Null erlaubt!");
-        }
+
     }
 
     public void activityTest(int a, int b) throws NoSenseException{
