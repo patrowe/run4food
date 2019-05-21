@@ -12,9 +12,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class AboutScene {
+public class AboutScene extends StandardScene{
 
-    private Stage mainStage;
     private Scene scene;
     private Label heading;
     private Text text;
@@ -27,9 +26,7 @@ public class AboutScene {
         mainMenuScene = new MainMenuScene();
     }
 
-    public void setScene(Stage stage){
-
-        mainStage = stage;
+    public void setScene(){
 
         heading = new Label("Über WeRun4Food");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -53,12 +50,12 @@ public class AboutScene {
         borderPane.setBottom(hbox);
 
         scene = new Scene(borderPane);
-        mainStage.setScene(scene);
-        mainStage.setMaximized(false);
-        mainStage.setMaximized(true);
+        super.mainStage.setScene(scene);
+        super.mainStage.setMaximized(false);
+        super.mainStage.setMaximized(true);
 
         backToMenu.setOnAction(actionEvent -> {
-            mainMenuScene.setScene(mainStage);
+            mainMenuScene.setScene();
         });
 
     }

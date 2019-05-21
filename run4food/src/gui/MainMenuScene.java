@@ -13,26 +13,28 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 
-public class MainMenuScene {
+public class MainMenuScene extends StandardScene{
 
-    private Stage mainStage;
     private Scene startScene;
-    private Button registration, loginAsUser, loginAsGuest, about;
+    private Button registration, loginAsUser, loginAsGuest, order, about;
     private Label welcome, heading;
     private BorderPane borderPane;
     private VBox vBox;
     private HBox hBox;
     private RegistrationScene registrationScene;
     private GuestLoginScene guestLoginScene;
+    private UserListScene userListScene;
     private AboutScene aboutScene;
 
-    MainMenuScene(){
+    MainMenuScene(Stage stage){
+        mainStage = stage;
+    }
+
+    public MainMenuScene(){
 
     }
 
-    public void setScene(Stage stage){
-
-        mainStage = stage;
+    public void setScene(){
 
         heading = new Label("Hauptmenü");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -58,6 +60,11 @@ public class MainMenuScene {
         loginAsGuest.setMaxWidth(600);
         loginAsGuest.setMinHeight(50);
 
+        order = new Button("Ohne Anmeldung direkt zur Bestellung");
+        order.setFont(Font.font("Calibri", FontWeight.NORMAL, 22));
+        order.setMaxWidth(600);
+        order.setMinHeight(50);
+
         about = new Button("Über WeRun4Food");
         about.setFont(Font.font("Calibri", FontWeight.NORMAL, 22));
         about.setMaxWidth(600);
@@ -69,7 +76,7 @@ public class MainMenuScene {
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(10);
         hBox.getChildren().add(vBox);
-        vBox.getChildren().addAll(welcome, registration, loginAsUser, loginAsGuest, about);
+        vBox.getChildren().addAll(welcome, registration, loginAsUser, loginAsGuest, order, about);
 
         borderPane = new BorderPane();
         borderPane.setTop(heading);
@@ -84,22 +91,28 @@ public class MainMenuScene {
 
         registration.setOnAction(actionEvent -> {
             registrationScene = new RegistrationScene();
-            registrationScene.setScene(mainStage);
+            registrationScene.setScene();
         });
 
         loginAsGuest.setOnAction(actionEvent -> {
             guestLoginScene = new GuestLoginScene();
-            guestLoginScene.setScene(mainStage);
+            guestLoginScene.setScene();
         });
 
         loginAsUser.setOnAction(actionEvent -> {
-            DailyRoutineScene dailyRoutineScene = new DailyRoutineScene();
-            dailyRoutineScene.setScene(mainStage);
+            userListScene = new UserListScene();
+            userListScene.setScene();
+            //DailyRoutineScene dailyRoutineScene = new DailyRoutineScene();
+            //dailyRoutineScene.setScene(mainStage);
+        });
+
+        order.setOnAction(actionEvent -> {
+
         });
 
         about.setOnAction(actionEvent -> {
             aboutScene = new AboutScene();
-            aboutScene.setScene(mainStage);
+            aboutScene.setScene();
         });
 
     }

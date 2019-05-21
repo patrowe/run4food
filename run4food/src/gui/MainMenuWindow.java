@@ -13,8 +13,8 @@ public class MainMenuWindow extends Application {
         mainStage = stage;
         mainStage.setTitle("WeRun4Food");
         mainStage.setMaximized(true);
-        mainMenuScene = new MainMenuScene();
-        mainMenuScene.setScene(mainStage);
+        mainMenuScene = new MainMenuScene(mainStage);
+        mainMenuScene.setScene();
 
     }
 

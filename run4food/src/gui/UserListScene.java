@@ -1,6 +1,6 @@
 package gui;
 
-import controller.UserManagementController;
+import controller.StartController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -8,32 +8,47 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
+import java.util.ArrayList;
 
-public class UserListScene {
 
-    private Stage mainStage;
+public class UserListScene extends StandardScene{
+
     private Scene scene;
     private Label heading;
     private Button backToMenu;
     private HBox hbox;
-    private UserManagementController userManagementController;
+    private VBox vBox;
+    private StartController startController;
     private BorderPane borderPane;
+    private ArrayList<String> nickList;
 
     UserListScene(){
-        userManagementController = new UserManagementController();
+        startController = new StartController();
     }
 
-    public void setScene(Stage stage){
-
-        mainStage = stage;
+    public void setScene(){
 
         heading = new Label("Profile");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
         heading.setMinHeight(100);
         heading.setPadding(new Insets(10));
+
+
+        startController = new StartController();
+        nickList = new ArrayList<>();
+        nickList = startController.callLoadRegisteredUsers();
+
+        vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setSpacing(10);
+
+        for(String nick : nickList){
+            vBox.getChildren().add(new StandardButton(nick));
+        }
+
 
         backToMenu = new Button("Abbrechen und zum Hauptmenü zurückkehren");
         backToMenu.setFont(Font.font("Calibri", FontWeight.BOLD, 25));
@@ -46,11 +61,16 @@ public class UserListScene {
 
         borderPane = new BorderPane();
         borderPane.setTop(heading);
+        borderPane.setCenter(vBox);
         borderPane.setBottom(hbox);
 
         scene = new Scene(borderPane);
         mainStage.setScene(scene);
         mainStage.setMaximized(false);
         mainStage.setMaximized(true);
+
+        backToMenu.setOnAction(actionEvent -> {
+            startController.openMainMenu();
+        });
     }
 }

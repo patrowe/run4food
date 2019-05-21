@@ -16,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,26 +24,24 @@ import java.util.Date;
 import java.util.Iterator;
 
 
-public class DailyRoutineScene {
+public class DailyRoutineScene extends StandardScene{
 
-    private Stage mainStage;
     private Scene dailyRoutineScene;
     private Label heading, actualdate, nameLabel, basalmetabolismLabel, stepsExplanation, stepsLabel, activityExplanation,
             activityLabel, activityLabel2, activityLabel3, eatenCaloriesText, ownCaloriesText, ownCaloriesLabel, ownCaloriesError,
             calories, stepsError, activityError, eatenCaloriesError;
     private CheckBox apple, pear, crispbread, toast, wholeWheatBread;
     private String dateAsString;
-    private TextField steps, ownCalories;
+    private NumberTextField steps, ownCalories;
     private TextField numberApple, numberPear, numberCrispbread, numberToast, numberWholeWheatBread;
     private Button calculateSteps, calculateActivities, calculateEatenCalories, calculateOwnCalories, order, backToMenu, editProfile, orderHistory, weekOverview;
     private VBox vBox, eatenCaloriesFoodList, eatenCaloriesTextFieldList, activityList, activityDurationHoursList, activityDurationMinutesList, activityTitledPaneContent;
     private HBox dateHBox, stepsHBox, activityHBox, activityLabelHBox, activityUIElementHbox, eatenCaloriesHBox, eatenCaloriesUIElementHBox, ownCaloriesHBox, navigationHBox;
-    private ScrollPane activityHoursScrollPane, scrollPane;
+    private ScrollPane scrollPane;
     private TitledPane activityTitledPane, eatenCaloriesTitledPane;
     private BorderPane borderpane;
     private MainMenuScene mainMenuScene;
     private DailyRoutineController dailyRoutineController;
-
     private int basalmetabolism;
     private String name;
 
@@ -50,9 +49,7 @@ public class DailyRoutineScene {
         mainMenuScene = new MainMenuScene();
     }
 
-    public void setScene(Stage stage){
-
-        mainStage = stage;
+    public void setScene(String name){
 
         heading = new Label("Dash Board");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -70,7 +67,6 @@ public class DailyRoutineScene {
         dateHBox.setAlignment(Pos.TOP_RIGHT);
         dateHBox.getChildren().add(actualdate);
 
-        name = "...";
         nameLabel = new Label("Hallo " + name + ", schön, dass du da bist!");
         nameLabel.setFont(Font.font("Calibri", 25));
         nameLabel.setMinHeight(50);
@@ -89,7 +85,7 @@ public class DailyRoutineScene {
         stepsLabel.setFont(Font.font("Calibri", 15));
         stepsLabel.setMinHeight(50);
 
-        steps = new TextField("0");
+        steps = new NumberTextField("0");
         steps.setMinHeight(25);
         steps.setMaxWidth(60);
         steps.setFont(Font.font("Calibri", 12));
@@ -297,7 +293,7 @@ public class DailyRoutineScene {
         ownCaloriesLabel.setFont(Font.font("Calibri", 15));
         ownCaloriesLabel.setMinHeight(50);
 
-        ownCalories = new TextField("0");
+        ownCalories = new NumberTextField("0");
         ownCalories.setMinHeight(25);
         ownCalories.setMaxWidth(40);
         ownCalories.setFont(Font.font("Calibri", 12));
@@ -359,13 +355,22 @@ public class DailyRoutineScene {
         borderpane.setBottom(navigationHBox);
 
         dailyRoutineScene = new Scene(borderpane);
-        mainStage.setScene(dailyRoutineScene);
-        mainStage.setMaximized(false);
-        mainStage.setMaximized(true);
+        super.mainStage.setScene(dailyRoutineScene);
+        super.mainStage.setMaximized(false);
+        super.mainStage.setMaximized(true);
 
         dailyRoutineController = new DailyRoutineController();
 
         // ActionListeners for the Buttons
+
+        calculateSteps.setOnAction(actionEvent -> {
+            int a = Integer.parseInt(steps.getText());
+            try {
+                dailyRoutineController.testOneNumber(a);
+            }catch(NoSenseException e){
+                stepsError.setText(e.getMessage());
+            }
+        });
 
         calculateEatenCalories.setOnAction(actionEvent -> {
 
@@ -388,16 +393,10 @@ public class DailyRoutineScene {
                 if(checkBoxes.get(i).isSelected()){
                     minimumOneChosen = true;
                     try {
-                        dailyRoutineController.caloriesTest(textFields.get(i).getText());
-                    }catch(FieldIsEmptyException e){
+                        dailyRoutineController.testOneNumber(1);
+                    }catch(NoSenseException e){
                         testSuccessful = false;
                         eatenCaloriesError.setText(e.getMessage());
-                    }catch(NumberFormatException e){
-                        eatenCaloriesError.setText(e.getMessage());
-                        testSuccessful = false;
-                    }catch(NegativeNumberException e){
-                        eatenCaloriesError.setText(e.getMessage());
-                        testSuccessful = false;
                     }
                 }
             }
@@ -473,7 +472,7 @@ public class DailyRoutineScene {
         });
 
         backToMenu.setOnAction(actionEvent -> {
-            mainMenuScene.setScene(mainStage);
+            mainMenuScene.setScene();
         });
 
         editProfile.setOnAction(actionEvent -> {
@@ -489,4 +488,5 @@ public class DailyRoutineScene {
         });
 
     }
+
 }

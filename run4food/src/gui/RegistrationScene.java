@@ -1,5 +1,6 @@
 package gui;
 
+import controller.StartController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,29 +12,32 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-public class RegistrationScene {
+import java.util.ArrayList;
 
-    private Stage mainStage;
+public class RegistrationScene extends StandardScene{
+
     private Scene registrationScene;
     private BorderPane registrationBorderPane;
     private ScrollPane registrationScrollPane;
     private VBox registrationVBox;
     private HBox registrationHBox, name, street, place, gender, preferedFood, incompatibility, registrationButtons;
     private Label registrationTitle, questionNickname, questionName, questionLiving, questionGender, questionPhone, questionAge, questionweight, questionHeight, questionPreferedFood, questionIncompatibility;
-    private TextField nickname, forename, surename, streetName, streetNumber, postcode, city, phone, age, weight, height;
+    private TextField nickname, forenameTextField, surnameTextField, streetNameTextField, cityTextField;
+    private NumberTextField streetNumberTextField, postcodeTextField, phoneTextField, ageTextField, weightTextField, heightTextField;
     private CheckBox gluten, wheat, lactose;
     private RadioButton veggie, vegan, eatAll, male, female, diverse;
     private ToggleGroup optionsPreferedFood, optionsGender;
     private Button registrationCancel, registrationSave;
     private MainMenuScene mainMenuScene;
+    private StartController startController;
+    private DailyRoutineScene dailyRoutineScene;
 
     RegistrationScene(){
         mainMenuScene = new MainMenuScene();
     }
 
-    public void setScene(Stage stage){
+    public void setScene(){
 
-        mainStage = stage;
         registrationTitle = new Label("Registrierung");
         registrationTitle.setFont(Font.font("Calibri", FontWeight.THIN, 40));
         registrationTitle.setMinHeight(100);
@@ -50,53 +54,53 @@ public class RegistrationScene {
         questionName.setFont(Font.font("Calibri", FontWeight.NORMAL, 25));
         questionName.setMinHeight(50);
 
-        forename = new TextField("Vorname");
-        forename.setFont(Font.font("Calibri", 20));
+        forenameTextField = new TextField("Vorname");
+        forenameTextField.setFont(Font.font("Calibri", 20));
 
-        surename = new TextField("Nachname");
-        surename.setFont(Font.font("Calibri", 20));
+        surnameTextField = new TextField("Nachname");
+        surnameTextField.setFont(Font.font("Calibri", 20));
 
         name = new HBox();
         name.setSpacing(20);
-        name.getChildren().addAll(forename, surename);
+        name.getChildren().addAll(forenameTextField, surnameTextField);
 
         questionLiving = new Label("Wo lebst du?");
         questionLiving.setFont(Font.font("Calibri", FontWeight.NORMAL, 25));
         questionLiving.setMinHeight(50);
 
-        streetName = new TextField("Straße");
-        streetName.setFont(Font.font("Calibri", 20));
+        streetNameTextField = new NumberTextField("Straße");
+        streetNameTextField.setFont(Font.font("Calibri", 20));
 
-        streetNumber = new TextField(("Nr."));
-        streetNumber.setFont(Font.font("Calibri", 20));
+        streetNumberTextField = new NumberTextField(("Nr."));
+        streetNumberTextField.setFont(Font.font("Calibri", 20));
 
         street = new HBox();
         street.setSpacing(20);
-        street.getChildren().addAll(streetName, streetNumber);
+        street.getChildren().addAll(streetNameTextField, streetNumberTextField);
 
-        postcode = new TextField("PLZ");
-        postcode.setFont(Font.font("Calibri", 20));
+        postcodeTextField = new NumberTextField("PLZ");
+        postcodeTextField.setFont(Font.font("Calibri", 20));
 
-        city = new TextField("Stadt");
-        city.setFont(Font.font("Calibri", 20));
+        cityTextField = new TextField("Stadt");
+        cityTextField.setFont(Font.font("Calibri", 20));
 
         place = new HBox();
         place.setSpacing(20);
-        place.getChildren().addAll(postcode, city);
+        place.getChildren().addAll(postcodeTextField, cityTextField);
 
         questionPhone = new Label("Unter welcher Telefonnummer bist du erreichbar?");
         questionPhone.setFont(Font.font("Calibri", 25));
         questionPhone.setMinHeight(50);
 
-        phone = new TextField("Telefonnummer");
-        phone.setFont(Font.font("Calibri", 20));
+        phoneTextField = new NumberTextField("Telefonnummer");
+        phoneTextField.setFont(Font.font("Calibri", 20));
 
         questionAge = new Label("Wie jung bist du?");
         questionAge.setFont(Font.font("Calibri", 25));
         questionAge.setMinHeight(50);
 
-        age = new TextField("Alter");
-        age.setFont(Font.font("Calibri", 20));
+        ageTextField = new NumberTextField("Alter");
+        ageTextField.setFont(Font.font("Calibri", 20));
 
         questionGender = new Label("Welchem Geschlecht fühlst du dich zugehörig?");
         questionGender.setFont(Font.font("Calibri", 25));
@@ -129,15 +133,15 @@ public class RegistrationScene {
         questionHeight.setFont(Font.font("Calibri", 25));
         questionHeight.setMinHeight(50);
 
-        height = new TextField("Körpergröße");
-        height.setFont(Font.font("Calibri", 20));
+        heightTextField = new NumberTextField("Körpergröße");
+        heightTextField.setFont(Font.font("Calibri", 20));
 
         questionweight = new Label("Was für ein Gewicht zeigt deine Waage an?");
         questionweight.setFont(Font.font("Calibri", 25));
         questionweight.setMinHeight(50);
 
-        weight = new TextField("Körpergewicht");
-        weight.setFont(Font.font("Calibri", 20));
+        weightTextField = new NumberTextField("Körpergewicht");
+        weightTextField.setFont(Font.font("Calibri", 20));
 
         questionPreferedFood = new Label("Auf was achtest du beim Essen?");
         questionPreferedFood.setFont(Font.font("Calibri", 25));
@@ -207,8 +211,8 @@ public class RegistrationScene {
         registrationVBox = new VBox();
         registrationVBox.setAlignment(Pos.CENTER);
         registrationVBox.setSpacing(10);
-        registrationVBox.getChildren().addAll(registrationTitle, questionNickname, nickname, questionName, name, questionLiving, street, place, questionPhone, phone, questionAge, age,
-                questionGender, gender, questionHeight, height, questionweight, weight, questionPreferedFood, preferedFood, questionIncompatibility, incompatibility);
+        registrationVBox.getChildren().addAll(registrationTitle, questionNickname, nickname, questionName, name, questionLiving, street, place, questionPhone, phoneTextField, questionAge, ageTextField,
+                questionGender, gender, questionHeight, heightTextField, questionweight, weightTextField, questionPreferedFood, preferedFood, questionIncompatibility, incompatibility);
 
         registrationHBox = new HBox();
         registrationHBox.setAlignment(Pos.CENTER);
@@ -233,11 +237,37 @@ public class RegistrationScene {
         // ActionListeners for the buttons
 
         registrationSave.setOnAction(actionEvent -> {
-
+            startController = new StartController();
+            String nick = nickname.getText();
+            String forename = forenameTextField.getText();
+            String surname = surnameTextField.getText();
+            String street = streetNameTextField.getText();
+            int streetNumber = Integer.parseInt(streetNumberTextField.getText());
+            int postCode = Integer.parseInt(postcodeTextField.getText());
+            String city = cityTextField.getText();
+            int phone = Integer.parseInt(phoneTextField.getText());
+            int age = Integer.parseInt(ageTextField.getText());
+            String gender = optionsGender.getSelectedToggle().toString();
+            int height = Integer.parseInt(heightTextField.getText());
+            int weight = Integer.parseInt(weightTextField.getText());
+            String preferedFood = optionsPreferedFood.getSelectedToggle().toString();
+            ArrayList<String> incompatibilities = new ArrayList<>();
+            if(lactose.isSelected()){
+                incompatibilities.add(lactose.getText());
+            }
+            if(gluten.isSelected()){
+                incompatibilities.add(gluten.getText());
+            }
+            if(wheat.isSelected()){
+                incompatibilities.add(wheat.getText());
+            }
+            startController.callSaveUser(nick, forename, surname, street, streetNumber, postCode, city, phone, age, gender, height, weight, preferedFood, incompatibilities);
+            dailyRoutineScene = new DailyRoutineScene();
+            dailyRoutineScene.setScene(nick);
         });
 
         registrationCancel.setOnAction(actionEvent -> {
-            mainMenuScene.setScene(mainStage);
+            mainMenuScene.setScene();
         });
 
     }

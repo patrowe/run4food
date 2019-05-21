@@ -9,11 +9,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
 
-public class GuestLoginScene {
+public class GuestLoginScene extends StandardScene{
 
-    private Stage mainStage;
     private Scene registrationScene;
     private BorderPane registrationBorderPane;
     private ScrollPane registrationScrollPane;
@@ -31,9 +29,8 @@ public class GuestLoginScene {
         mainMenuScene = new MainMenuScene();
     }
 
-    public void setScene(Stage stage){
+    public void setScene(){
 
-        mainStage = stage;
         registrationTitle = new Label("Anmeldung als Gast");
         registrationTitle.setFont(Font.font("Calibri", FontWeight.THIN, 40));
         registrationTitle.setMinHeight(100);
@@ -219,9 +216,9 @@ public class GuestLoginScene {
         registrationBorderPane.setBottom(registrationButtons);
 
         registrationScene = new Scene(registrationBorderPane);
-        mainStage.setScene(registrationScene);
-        mainStage.setMaximized(false);
-        mainStage.setMaximized(true);
+        super.mainStage.setScene(registrationScene);
+        super.mainStage.setMaximized(false);
+        super.mainStage.setMaximized(true);
 
 
         registrationSave.setOnAction(actionEvent -> {
@@ -229,7 +226,7 @@ public class GuestLoginScene {
         });
 
         registrationCancel.setOnAction(actionEvent -> {
-            mainMenuScene.setScene(mainStage);
+            mainMenuScene.setScene();
         });
 
     }
