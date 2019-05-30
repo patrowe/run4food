@@ -1,52 +1,62 @@
 package run4food;
 
 
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 
 public class DailyRoutine {
-	// Version 1.1 under construction, not tested ;-)
+	// Version 1.2 under construction, not tested ;-)
 	
-	User activeUser;
-	Hashtable<Date, Double[]> activeDiary;
+	User user;
+	RegisteredUser regUser;
+	Hashtable<String, Integer[]> activeDiary;
 	
 	Calculator calc = new Calculator();
 	
-	double earnedCalory, consumedCalory, freeCalory;
-	private Date today;
-	public Double[] diaryEntry;
+	double earnedCalorie, consumedCalorie, freeCalorie;
+	private String today;
+	public Integer[] diaryEntry;
 	
 			
-	DailyRoutine(User user){
-		activeUser = user;
-		activeDiary = user.getDiary();
-		today = new Date();
-		diaryEntry = new Double[5];
+	DailyRoutine(RegisteredUser regUser){
+		
+		this.regUser = regUser;
+		
+		activeDiary = regUser.getDiary();
+		 
+		Calendar calendar = Calendar.getInstance();
+	    Date date = calendar.getTime();
+	    today = DateFormat.getDateInstance().format(date);
+		diaryEntry = new Integer[5];
 	}
 	
 	//hier müssen die Nutzereingaben übergeben werden.
 	public void calculateSteps(int steps) {
 	
-		earnedCalory+=calc.steps2calory(steps);
+		earnedCalorie+=calc.steps2calorie(steps);
 		
 	}
 
 	//hier müssen die Nutzereingaben übergeben werden.
-	public void calculateActivity(String activity, double duration) {
-
-		earnedCalory+=calc.activity2calory(activity, duration, activeUser.getWeight());
+	public void calculateActivity(String activity, double durationHouers, double durationMinitues) {
+		
+		double duration= durationHouers + (durationMinitues/60);
+		
+		earnedCalorie+=calc.activity2calorie(activity, duration, regUser.getWeight());
 		
 	}
 	//hier müssen die Nutzereingaben übergeben werden.
 	public void calculateConsumption(String food, double quantaty) {
 		
-		consumedCalory+=calc.food2calory(food, quantaty);
+		consumedCalorie+=calc.food2calorie(food, quantaty);
 		
 	}
-	//hier müssen die Nutzereingaben übergeben werden.
-	public void setFreeCalory() {
+	//hier werden die noch freien Kalorien für die Bestellung berechnet
+	public void setFreeCalorie() {
 		
-		freeCalory = activeUser.getBasalMetabolism() + earnedCalory - consumedCalory;
+		freeCalorie = regUser.getBasalMetabolism() + earnedCalorie - consumedCalorie;
 	
 	}
 	
@@ -57,15 +67,15 @@ public class DailyRoutine {
 	}
 	
 	public void updateDiary() {
-		
-		diaryEntry[0]=earnedCalory;
-		diaryEntry[1]=consumedCalory;
-		diaryEntry[2]=freeCalory;
-		diaryEntry[3]=activeUser.getWeight();
-		diaryEntry[4]=activeUser.getBasalMetabolism();
+		//Tagebucheintrag in der Reihenfolge earnedCalorie/consumedCalorie/freeCalorie/Weight/BasalMetabolsim
+		diaryEntry[0]=(int)earnedCalorie;
+		diaryEntry[1]=(int)consumedCalorie;
+		diaryEntry[2]=(int)freeCalorie;
+		diaryEntry[3]=(int)regUser.getWeight();
+		diaryEntry[4]=(int)regUser.getBasalMetabolism();
 		
 		// hier kann noch eine Abfrage kommen, ob für "heute" schon ein Eintrag besteht
-		activeUser.setDiary(today, diaryEntry);
+		regUser.setDiary(today, diaryEntry);
 		
 	}
 	
