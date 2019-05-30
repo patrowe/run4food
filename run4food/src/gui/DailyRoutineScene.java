@@ -1,39 +1,32 @@
 package gui;
 
 import controller.DailyRoutineController;
-import controller.FieldIsEmptyException;
-import controller.NegativeNumberException;
+import controller.MasterController;
 import controller.NoSenseException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
+import run4food.Lexicon;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 
 
 public class DailyRoutineScene extends StandardScene{
 
-    private Scene dailyRoutineScene;
     private Label heading, actualdate, nameLabel, basalmetabolismLabel, stepsExplanation, stepsLabel, activityExplanation,
             activityLabel, activityLabel2, activityLabel3, eatenCaloriesText, ownCaloriesText, ownCaloriesLabel, ownCaloriesError,
             calories, stepsError, activityError, eatenCaloriesError;
     private CheckBox apple, pear, crispbread, toast, wholeWheatBread;
     private String dateAsString;
     private NumberTextField steps, ownCalories;
-    private TextField numberApple, numberPear, numberCrispbread, numberToast, numberWholeWheatBread;
+    private NumberTextField numberApple, numberPear, numberCrispbread, numberToast, numberWholeWheatBread;
     private Button calculateSteps, calculateActivities, calculateEatenCalories, calculateOwnCalories, order, backToMenu, editProfile, orderHistory, weekOverview;
     private VBox vBox, eatenCaloriesFoodList, eatenCaloriesTextFieldList, activityList, activityDurationHoursList, activityDurationMinutesList, activityTitledPaneContent;
     private HBox dateHBox, stepsHBox, activityHBox, activityLabelHBox, activityUIElementHbox, eatenCaloriesHBox, eatenCaloriesUIElementHBox, ownCaloriesHBox, navigationHBox;
@@ -43,13 +36,14 @@ public class DailyRoutineScene extends StandardScene{
     private MainMenuScene mainMenuScene;
     private DailyRoutineController dailyRoutineController;
     private int basalmetabolism;
-    private String name;
+    private String userCalories;
 
-    DailyRoutineScene(){
+    public DailyRoutineScene(){
         mainMenuScene = new MainMenuScene();
+        dailyRoutineController = new DailyRoutineController();
     }
 
-    public void setScene(String name){
+    public void setScene(StandardScene standardScene, MasterController masterController){
 
         heading = new Label("Dash Board");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -67,7 +61,7 @@ public class DailyRoutineScene extends StandardScene{
         dateHBox.setAlignment(Pos.TOP_RIGHT);
         dateHBox.getChildren().add(actualdate);
 
-        nameLabel = new Label("Hallo " + name + ", schön, dass du da bist!");
+        nameLabel = new Label("Hallo " + dailyRoutineController.getNickname(masterController) + ", schön, dass du da bist!");
         nameLabel.setFont(Font.font("Calibri", 25));
         nameLabel.setMinHeight(50);
 
@@ -124,57 +118,27 @@ public class DailyRoutineScene extends StandardScene{
         activityLabel3.setMinHeight(20);
         activityLabel3.setMinWidth(60);
 
-        CheckBox swim = new CheckBox("Schwimmen");
-        swim.setMinHeight(25);
-        swim.setMinWidth(150);
-        CheckBox bicycle = new CheckBox("Fahrradfahren");
-        bicycle.setMinHeight(25);
-        bicycle.setMinWidth(150);
-        CheckBox run = new CheckBox("Laufen");
-        run.setMinHeight(25);
-        run.setMinWidth(150);
-
-        ChoiceBox<String> activityDurationHours = new ChoiceBox<>();
-        activityDurationHours.setMinWidth(60);
-        activityDurationHours.getItems().addAll("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
-                "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24");
-        activityDurationHours.setValue("0");
-        ChoiceBox<String> activityDurationHours2 = new ChoiceBox<>();
-        activityDurationHours2.setMinWidth(60);
-        activityDurationHours2.getItems().addAll("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
-                "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24");
-        activityDurationHours2.setValue("0");
-        ChoiceBox<String> activityDurationHours3 = new ChoiceBox<>();
-        activityDurationHours3.setMinWidth(60);
-        activityDurationHours3.getItems().addAll("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
-                "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24");
-        activityDurationHours3.setValue("0");
-
-        ChoiceBox<String> activityDurationMinutes = new ChoiceBox<>();
-        activityDurationMinutes.setMinWidth(60);
-        activityDurationMinutes.getItems().addAll("0", "15", "30", "45");
-        activityDurationMinutes.setValue("0");
-        ChoiceBox<String> activityDurationMinutes2 = new ChoiceBox<>();
-        activityDurationMinutes2.setMinWidth(60);
-        activityDurationMinutes2.getItems().addAll("0", "15", "30", "45");
-        activityDurationMinutes2.setValue("0");
-        ChoiceBox<String> activityDurationMinutes3 = new ChoiceBox<>();
-        activityDurationMinutes3.setMinWidth(60);
-        activityDurationMinutes3.getItems().addAll("0", "15", "30", "45");
-        activityDurationMinutes3.setValue("0");
+        Lexicon lexicon = new Lexicon();
 
         activityList = new VBox();
         activityList.setSpacing(5);
         activityList.setMinWidth(200);
-        activityList.getChildren().addAll(swim, bicycle, run);
 
         activityDurationHoursList = new VBox();
         activityDurationHoursList.setSpacing(5);
-        activityDurationHoursList.getChildren().addAll(activityDurationHours, activityDurationHours2, activityDurationHours3);
 
         activityDurationMinutesList = new VBox();
         activityDurationMinutesList.setSpacing(5);
-        activityDurationMinutesList.getChildren().addAll(activityDurationMinutes, activityDurationMinutes2, activityDurationMinutes3);
+
+        Set<String> activityKeys = lexicon.getActivity2calory().keySet();
+        Iterator<String> iterator = activityKeys.iterator();
+        while(iterator.hasNext()){
+            activityList.getChildren().add(new ActivityCheckBox(iterator.next()));
+            activityDurationHoursList.getChildren().add(new ActivityChoiceBox<String>("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
+                    "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"));
+            activityDurationMinutesList.getChildren().add(new ActivityChoiceBox<String>("0", "15", "30", "45"));
+        }
+
 
         activityLabelHBox = new HBox();
         activityLabelHBox.setSpacing(5);
@@ -212,55 +176,19 @@ public class DailyRoutineScene extends StandardScene{
         eatenCaloriesText.setFont(Font.font("Calibri", 25));
         eatenCaloriesText.setMinHeight(50);
 
-        apple = new CheckBox("Apfel");
-        apple.setMinHeight(25);
-        apple.setMinWidth(130);
-
-        pear = new CheckBox("Birne");
-        pear.setMinHeight(25);
-        pear.setMinWidth(130);
-
-        crispbread = new CheckBox("Knäckebrot");
-        crispbread.setMinHeight(25);
-        crispbread.setMinWidth(130);
-
-        toast = new CheckBox("Toastbrot");
-        toast.setMinHeight(25);
-        toast.setMinWidth(130);
-
-        wholeWheatBread = new CheckBox("Vollkornbrot");
-        wholeWheatBread.setMinHeight(25);
-        wholeWheatBread.setMinWidth(130);
-
-        numberApple = new TextField("0");
-        numberApple.setMinHeight(25);
-        numberApple.setAlignment(Pos.CENTER_LEFT);
-        numberApple.setPadding(new Insets(3));
-        numberPear = new TextField("0");
-        numberPear.setMinHeight(25);
-        numberPear.setAlignment(Pos.CENTER_LEFT);
-        numberPear.setPadding(new Insets(3));
-        numberCrispbread = new TextField("0");
-        numberCrispbread.setMinHeight(25);
-        numberCrispbread.setAlignment(Pos.CENTER_LEFT);
-        numberCrispbread.setPadding(new Insets(3));
-        numberToast = new TextField("0");
-        numberToast.setMinHeight(25);
-        numberToast.setAlignment(Pos.CENTER_LEFT);
-        numberToast.setPadding(new Insets(3));
-        numberWholeWheatBread = new TextField("0");
-        numberWholeWheatBread.setMinHeight(25);
-        numberWholeWheatBread.setAlignment(Pos.CENTER_LEFT);
-        numberWholeWheatBread.setPadding(new Insets(3));
-
         eatenCaloriesFoodList = new VBox();
-        eatenCaloriesFoodList.setSpacing(2);
+        eatenCaloriesFoodList.setSpacing(5);
         eatenCaloriesFoodList.setMinWidth(200);
-        eatenCaloriesFoodList.getChildren().addAll(apple, pear, crispbread, toast, wholeWheatBread);
+        //eatenCaloriesFoodList.getChildren().addAll(apple, pear, crispbread, toast, wholeWheatBread);
 
         eatenCaloriesTextFieldList = new VBox();
-        eatenCaloriesTextFieldList.setSpacing(2);
-        eatenCaloriesTextFieldList.getChildren().addAll(numberApple, numberPear, numberCrispbread, numberToast, numberWholeWheatBread);
+        eatenCaloriesTextFieldList.setSpacing(5);
+        //eatenCaloriesTextFieldList.getChildren().addAll(numberApple, numberPear, numberCrispbread, numberToast, numberWholeWheatBread);
+
+        for(String s : lexicon.getFood2calory().keySet()){
+            eatenCaloriesFoodList.getChildren().add(new EatenCaloriesCheckBox(s));
+            eatenCaloriesTextFieldList.getChildren().add(new NumberTextField("0", 25));
+        }
 
         eatenCaloriesHBox = new HBox();
         eatenCaloriesHBox.getChildren().addAll(eatenCaloriesFoodList, eatenCaloriesTextFieldList);
@@ -312,7 +240,9 @@ public class DailyRoutineScene extends StandardScene{
         ownCaloriesHBox.setAlignment(Pos.CENTER);
         ownCaloriesHBox.setSpacing(20);
 
-        calories = new Label("Du darfst noch Essen mit ... Kalorien bestellen.");
+        userCalories = dailyRoutineController.getFreeCalories(masterController);
+
+        calories = new Label("Du darfst noch Essen mit " + userCalories + " Kalorien bestellen.");
         calories.setFont(Font.font("Calibri", 25));
         calories.setMinHeight(50);
 
@@ -354,36 +284,110 @@ public class DailyRoutineScene extends StandardScene{
         borderpane.setCenter(scrollPane);
         borderpane.setBottom(navigationHBox);
 
-        dailyRoutineScene = new Scene(borderpane);
-        super.mainStage.setScene(dailyRoutineScene);
-        super.mainStage.setMaximized(false);
-        super.mainStage.setMaximized(true);
+        standardScene.setSceneContent(borderpane);
 
-        dailyRoutineController = new DailyRoutineController();
-
+        //
         // ActionListeners for the Buttons
+        //
 
         calculateSteps.setOnAction(actionEvent -> {
-            int a = Integer.parseInt(steps.getText());
             try {
+                int a = Integer.parseInt(steps.getText());
                 dailyRoutineController.testOneNumber(a);
+                stepsError.setText("Berechnung erfolgreich");
+                dailyRoutineController.callCalculateSteps(a, masterController);
+            }catch(NumberFormatException e){
+                stepsError.setText("Du musst eine Zahl eingeben, um die Kalorien berechnen zu lassen");
             }catch(NoSenseException e){
                 stepsError.setText(e.getMessage());
             }
+        });
+
+        calculateActivities.setOnAction(actionEvent -> {
+
+            // Every generated checkbox and ChoiceBox for activities is added to an ArrayList
+            boolean minimumOneChosen = false;
+            boolean testSuccessful = true;
+            ArrayList<ActivityCheckBox> checkBoxes = new ArrayList<>();
+            ArrayList<Integer> choiceBoxesHours = new ArrayList<>();
+            ArrayList<Integer> choiceBoxesMinutes = new ArrayList<>();
+            Iterator iteratorCheckboxes = activityList.getChildren().iterator();
+            Iterator iteratorChoiceBoxesHours = activityDurationHoursList.getChildren().iterator();
+            Iterator iteratorChoiceBoxesMinutes = activityDurationMinutesList.getChildren().iterator();
+            while(iteratorCheckboxes.hasNext()){
+                checkBoxes.add((ActivityCheckBox) iteratorCheckboxes.next());
+            }
+            while(iteratorChoiceBoxesHours.hasNext()){
+                try {
+                    String s = ((ActivityChoiceBox<String>) iteratorChoiceBoxesHours.next()).getValue();
+                    if(s == null){
+                        choiceBoxesHours.add(0);
+                    }else{
+                        choiceBoxesHours.add(Integer.parseInt(s));
+                    }
+                }catch(NullPointerException e){
+                    testSuccessful = false;
+                }
+            }
+            while(iteratorChoiceBoxesMinutes.hasNext()){
+                try {
+                    String s = ((ActivityChoiceBox<String>) iteratorChoiceBoxesMinutes.next()).getValue();
+                    if(s == null){
+                        choiceBoxesMinutes.add(0);
+                    }else{
+                        choiceBoxesMinutes.add(Integer.parseInt(s));
+                    }
+                }catch(NullPointerException e){
+                    testSuccessful = false;
+                }
+            }
+            for (Integer s : choiceBoxesHours){
+                System.out.println(s);
+            }
+            for (Integer s : choiceBoxesMinutes){
+                System.out.println(s);
+            }
+            for (int i = 0; i < checkBoxes.size(); i++){
+                if(checkBoxes.get(i).isSelected()) {
+                    minimumOneChosen = true;
+                    try {
+                        dailyRoutineController.activityTest(choiceBoxesHours.get(i), choiceBoxesMinutes.get(i));
+                    }catch(IndexOutOfBoundsException e){
+                        e.printStackTrace();
+                    }catch (NoSenseException e) {
+                        testSuccessful = false;
+                        activityError.setText(e.getMessage());
+                    }
+                }
+
+            }
+
+            if(!minimumOneChosen){
+                activityError.setText("Du hast kein Aktivität ausgewählt!");
+            }else if(testSuccessful){
+                for(int i = 0; i < checkBoxes.size(); i++){
+                    if(checkBoxes.get(i).isSelected()){
+                        //dailyRoutineController.callCalculateActivity(checkBoxes.get(i).getText(),
+                                //Integer.parseInt(choiceBoxesHours.get(i)), Integer.parseInt(choiceBoxesMinutes.get(i)));
+                    }
+                }
+                activityError.setText("Berechnung erfolgreich.");
+            }
+
         });
 
         calculateEatenCalories.setOnAction(actionEvent -> {
 
             // Every generated checkbox and textfield for activities is added to an ArrayList
             ArrayList<CheckBox> checkBoxes = new ArrayList<>();
-            ArrayList<TextField> textFields = new ArrayList<>();
+            ArrayList<NumberTextField> textFields = new ArrayList<>();
             Iterator iteratorCheckBoxes = eatenCaloriesFoodList.getChildren().iterator();
             while(iteratorCheckBoxes.hasNext()){
                 checkBoxes.add((CheckBox)iteratorCheckBoxes.next());
             }
             Iterator iteratorTextFields = eatenCaloriesTextFieldList.getChildren().iterator();
             while (iteratorTextFields.hasNext()){
-                textFields.add((TextField)iteratorTextFields.next());
+                textFields.add((NumberTextField) iteratorTextFields.next());
             }
 
             // Calling a test method of DailyRoutineController to check, if the user's input is valid
@@ -393,8 +397,13 @@ public class DailyRoutineScene extends StandardScene{
                 if(checkBoxes.get(i).isSelected()){
                     minimumOneChosen = true;
                     try {
-                        dailyRoutineController.testOneNumber(1);
-                    }catch(NoSenseException e){
+                        int a = Integer.parseInt(textFields.get(i).getText());
+                        dailyRoutineController.testOneNumber(a);
+                        eatenCaloriesError.setText("Berechnung erfolgreich");
+                    }catch(NumberFormatException e){
+                        testSuccessful = false;
+                        eatenCaloriesError.setText("Wenn ein Lebensmittel ausgewählt ist, muss auch die Anzahl eingegeben werden");
+                    } catch(NoSenseException e){
                         testSuccessful = false;
                         eatenCaloriesError.setText(e.getMessage());
                     }
@@ -413,66 +422,26 @@ public class DailyRoutineScene extends StandardScene{
 
         });
 
-        calculateActivities.setOnAction(actionEvent -> {
-
-            boolean minimumOneChosen = false;
-            boolean testSuccessful = true;
-            ArrayList<CheckBox> checkBoxes = new ArrayList<>();
-            ArrayList<Integer> choiceBoxesHours = new ArrayList<>();
-            ArrayList<Integer> choiceBoxesMinutes = new ArrayList<>();
-            Iterator iteratorCheckboxes = activityList.getChildren().iterator();
-            Iterator iteratorChoiceBoxesHours = activityDurationHoursList.getChildren().iterator();
-            Iterator iteratorChoiceBoxesMinutes = activityDurationMinutesList.getChildren().iterator();
-            while(iteratorCheckboxes.hasNext()){
-                //System.out.println(((ChoiceBox<String>)iteratorChoiceBoxesHours.next()).getValue());
-                checkBoxes.add((CheckBox)iteratorCheckboxes.next());
-            }
-            while(iteratorChoiceBoxesHours.hasNext()){
-                choiceBoxesHours.add(Integer.parseInt(((ChoiceBox<String>)iteratorChoiceBoxesHours.next()).getValue()));
-            }
-            while(iteratorChoiceBoxesMinutes.hasNext()){
-                choiceBoxesMinutes.add(Integer.parseInt(((ChoiceBox<String>)iteratorChoiceBoxesMinutes.next()).getValue()));
-            }
-
-            for (int i = 0; i < checkBoxes.size(); i++){
-                if(checkBoxes.get(i).isSelected()) {
-                    minimumOneChosen = true;
-                    try {
-                        dailyRoutineController.activityTest(choiceBoxesHours.get(i), choiceBoxesMinutes.get(i));
-                    } catch (NoSenseException e) {
-                        testSuccessful = false;
-                        activityError.setText(e.getMessage());
-                    }
-                }
-
-            }
-            // Every generated checkbox and ChoiceBox for activities is added to an ArrayList
-
-
-            if(!minimumOneChosen){
-                activityError.setText("Du hast kein Aktivität ausgewählt!");
-            }else if(testSuccessful){
-                for(int i = 0; i < checkBoxes.size(); i++){
-                    if(checkBoxes.get(i).isSelected()){
-                        //dailyRoutineController.callCalculateActivity(checkBoxes.get(i).getText(),
-                                //Integer.parseInt(choiceBoxesHours.get(i)), Integer.parseInt(choiceBoxesMinutes.get(i)));
-                    }
-                }
-                activityError.setText("Berechnung erfolgreich.");
-            }
-
-        });
-
         calculateOwnCalories.setOnAction(actionEvent -> {
-
+            try {
+                int a = Integer.parseInt(ownCalories.getText());
+                dailyRoutineController.testOneNumber(a);
+                ownCaloriesError.setText("Berechnung erfolgreich");
+                dailyRoutineController.callCalculateSteps(a, masterController);
+            }catch(NumberFormatException e){
+                ownCaloriesError.setText("Du musst eine Zahl eingeben, um die Kalorien berechnen zu lassen");
+            }catch(NoSenseException e){
+                ownCaloriesError.setText(e.getMessage());
+            }
         });
 
         order.setOnAction(actionEvent -> {
-
+            MenuCardScene menuCardScene = new MenuCardScene();
+            menuCardScene.setScene(standardScene, masterController);
         });
 
         backToMenu.setOnAction(actionEvent -> {
-            mainMenuScene.setScene();
+            mainMenuScene.setScene(standardScene, masterController);
         });
 
         editProfile.setOnAction(actionEvent -> {

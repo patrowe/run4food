@@ -1,5 +1,6 @@
 package gui;
 
+import controller.MasterController;
 import controller.StartController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,13 +11,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
-
 import java.util.ArrayList;
 
 public class RegistrationScene extends StandardScene{
 
-    private Scene registrationScene;
     private BorderPane registrationBorderPane;
     private ScrollPane registrationScrollPane;
     private VBox registrationVBox;
@@ -33,10 +31,10 @@ public class RegistrationScene extends StandardScene{
     private DailyRoutineScene dailyRoutineScene;
 
     RegistrationScene(){
-        mainMenuScene = new MainMenuScene();
+        super();
     }
 
-    public void setScene(){
+    public void setScene(StandardScene standardScene, MasterController masterController){
 
         registrationTitle = new Label("Registrierung");
         registrationTitle.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -229,15 +227,12 @@ public class RegistrationScene extends StandardScene{
         registrationBorderPane.setCenter(registrationScrollPane);
         registrationBorderPane.setBottom(registrationButtons);
 
-        registrationScene = new Scene(registrationBorderPane);
-        mainStage.setScene(registrationScene);
-        mainStage.setMaximized(false);
-        mainStage.setMaximized(true);
+        standardScene.setSceneContent(registrationBorderPane);
 
         // ActionListeners for the buttons
 
         registrationSave.setOnAction(actionEvent -> {
-            startController = new StartController();
+            startController = new StartController(masterController);
             String nick = nickname.getText();
             String forename = forenameTextField.getText();
             String surname = surnameTextField.getText();
@@ -263,11 +258,13 @@ public class RegistrationScene extends StandardScene{
             }
             startController.callSaveUser(nick, forename, surname, street, streetNumber, postCode, city, phone, age, gender, height, weight, preferedFood, incompatibilities);
             dailyRoutineScene = new DailyRoutineScene();
-            dailyRoutineScene.setScene(nick);
+            masterController.setNickname(nick);
+            dailyRoutineScene.setScene(standardScene, masterController);
         });
 
         registrationCancel.setOnAction(actionEvent -> {
-            mainMenuScene.setScene();
+            mainMenuScene = new MainMenuScene();
+            mainMenuScene.setScene(standardScene, masterController);
         });
 
     }

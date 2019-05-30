@@ -1,16 +1,24 @@
 package gui;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 
 // Source for methods: https://stackoverflow.com/a/18959399
 
 public class NumberTextField extends TextField {
 
-    private DailyRoutineScene dailyRoutineScene;
+
 
     public NumberTextField(String s){
         setText(s);
-        dailyRoutineScene = new DailyRoutineScene();
+    }
+
+    public NumberTextField(String text, int height){
+        setText(text);
+        setMinHeight(height);
+        setAlignment(Pos.CENTER_LEFT);
+        setPadding(new Insets(3));
     }
 
     @Override

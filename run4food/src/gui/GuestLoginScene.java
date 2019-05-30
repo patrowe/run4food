@@ -1,8 +1,8 @@
 package gui;
 
+import controller.MasterController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -12,7 +12,6 @@ import javafx.scene.text.FontWeight;
 
 public class GuestLoginScene extends StandardScene{
 
-    private Scene registrationScene;
     private BorderPane registrationBorderPane;
     private ScrollPane registrationScrollPane;
     private VBox registrationVBox;
@@ -29,7 +28,7 @@ public class GuestLoginScene extends StandardScene{
         mainMenuScene = new MainMenuScene();
     }
 
-    public void setScene(){
+    public void setScene(StandardScene standardScene, MasterController masterController){
 
         registrationTitle = new Label("Anmeldung als Gast");
         registrationTitle.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -215,18 +214,14 @@ public class GuestLoginScene extends StandardScene{
         registrationBorderPane.setCenter(registrationScrollPane);
         registrationBorderPane.setBottom(registrationButtons);
 
-        registrationScene = new Scene(registrationBorderPane);
-        super.mainStage.setScene(registrationScene);
-        super.mainStage.setMaximized(false);
-        super.mainStage.setMaximized(true);
-
+        standardScene.setSceneContent(registrationBorderPane);
 
         registrationSave.setOnAction(actionEvent -> {
 
         });
 
         registrationCancel.setOnAction(actionEvent -> {
-            mainMenuScene.setScene();
+            mainMenuScene.setScene(standardScene, masterController);
         });
 
     }
