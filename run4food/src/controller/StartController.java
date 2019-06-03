@@ -1,49 +1,41 @@
 package controller;
 
-import gui.MainMenuScene;
-import gui.MainMenuWindow;
-import gui.StandardButton;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import run4food.MainMenu;
+import run4food.DailyRoutine;
 import run4food.RegisteredUser;
-import run4food.UserManagement;
 import java.util.ArrayList;
 
+public class StartController {
 
-public class StartController implements EventHandler {
-
-    private UserManagement userManagement;
-    private MainMenu mainMenu;
-    private MainMenuScene mainMenuScene;
-    private RegisteredUser registeredUser;
     private ArrayList<RegisteredUser> registeredUsers;
     private ArrayList<String> nickList;
+    private MasterController masterController;
+    private DailyRoutine dailyRoutine;
 
-    public StartController(){
-        mainMenu = new MainMenu();
-    }
-
-    public void createWindow(){
-        MainMenuWindow.launch();
-    }
-
-    public void openMainMenu(){
-        mainMenuScene = new MainMenuScene();
-        mainMenuScene.setScene();
+    public StartController(MasterController masterController){
+        this.masterController = masterController;
     }
 
     public void callSaveUser(String nick, String forename, String surname, String streetName, int streetNumber,
                              int postcode, String city, int phone, int age, String gender, int height, int weight,
                              String preferedFood, ArrayList<String> incompatibilities){
         String street = streetName+streetNumber;
-        mainMenu.setNewRegisteredUser(surname, forename, street, age, weight, height, gender, nick);
+        try {
+            dailyRoutine = new DailyRoutine(masterController.user);
+            int basal = (int)dailyRoutine.basalMetabolism(age, weight, (double)height, gender);
+            RegisteredUser registeredUser = new RegisteredUser(surname, forename, street, age, weight, height, gender, nick, basal);
+            masterController.userManagement.saveUser(registeredUser);
+            masterController.setUser(registeredUser);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
-
-    public ArrayList<String> callLoadRegisteredUsers(){
-        registeredUsers = new ArrayList<>();
-        registeredUsers = mainMenu.loadRegisteredUsers();
+    public ArrayList<String> loadNicknames(){
+        try {
+            registeredUsers = masterController.userManagement.loadListe();
+        }catch(Exception e){
+            e.getMessage();
+        }
         nickList = new ArrayList<>();
         for(RegisteredUser user : registeredUsers){
             nickList.add(user.getUserId());
@@ -51,10 +43,23 @@ public class StartController implements EventHandler {
         return nickList;
     }
 
-    @Override
-    public void handle(Event event) {
-        StandardButton button = (StandardButton)event.getSource();
-        mainMenu.loadOneUser(button.getText());
-        event.getSource();
+    private ArrayList<RegisteredUser> loadRegisteredUsers(){
+        try {
+            return masterController.userManagement.loadListe();
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
+
+    public void callLoadOneUser(String nickName){
+        registeredUsers = this.loadRegisteredUsers();
+        for(RegisteredUser user : registeredUsers){
+            if(user.userId.equals(nickName)){
+                masterController.setUser(user);
+            }
+        }
+        masterController.nickname = nickName;
+    }
+
 }
