@@ -1,20 +1,21 @@
 package gui;
 
+import controller.MasterController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class MainMenuWindow extends Application {
 
-    private Stage mainStage;
-    private MainMenuScene mainMenuScene;
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
-    public void start(Stage stage) throws Exception {
-        mainStage = stage;
-        mainStage.setTitle("WeRun4Food");
-        mainStage.setMaximized(true);
-        mainMenuScene = new MainMenuScene(mainStage);
-        mainMenuScene.setScene();
+    public void start(Stage stage) {
+        StandardScene standardScene = new StandardScene(stage);
+        MasterController masterController = new MasterController();
+        MainMenuScene mainMenuScene = new MainMenuScene();
+        mainMenuScene.setScene(standardScene, masterController);
 
     }
 

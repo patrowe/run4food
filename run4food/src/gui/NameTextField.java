@@ -3,11 +3,11 @@ package gui;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 
-public class NumberTextField extends TextField{
+public class NameTextField extends TextField{
 
     private ErrorLabel label;
 
-    NumberTextField(String text, ErrorLabel label){
+    NameTextField(String text, ErrorLabel label){
         setText(text);
         setFont(Font.font("Calibri", 17));
         setMinHeight(35);
@@ -31,19 +31,18 @@ public class NumberTextField extends TextField{
     }
 
     private boolean check(String text){
-        if(text.matches("[0-9]*")){
+        if(text.matches("[A-Za-z]*")){
             label.setText("");
             label.setBlack();
             return true;
-        }else if(text.matches("[A-Za-z]")){
-            label.setText("Du darfst hier keine Buchstaben eingeben.");
+        }else if(text.matches("[0-9]")) {
+            label.setText("Du darfst hier keine Zahlen eingeben.");
             label.setRed();
             return false;
         }else{
-            label.setText("Du darfst hier nur Zahlen eingeben.");
+            label.setText("Du darfst hier nur Buchstaben eingeben.");
             label.setRed();
             return false;
         }
     }
-
 }

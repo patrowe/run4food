@@ -1,8 +1,8 @@
 package gui;
 
+import controller.MasterController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -10,11 +10,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 public class AboutScene extends StandardScene{
 
-    private Scene scene;
     private Label heading;
     private Text text;
     private Button backToMenu;
@@ -26,7 +24,7 @@ public class AboutScene extends StandardScene{
         mainMenuScene = new MainMenuScene();
     }
 
-    public void setScene(){
+    public void setScene(StandardScene standardScene, MasterController masterController){
 
         heading = new Label("Über WeRun4Food");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -49,13 +47,10 @@ public class AboutScene extends StandardScene{
         borderPane.setCenter(text);
         borderPane.setBottom(hbox);
 
-        scene = new Scene(borderPane);
-        super.mainStage.setScene(scene);
-        super.mainStage.setMaximized(false);
-        super.mainStage.setMaximized(true);
+        standardScene.setSceneContent(borderPane);
 
         backToMenu.setOnAction(actionEvent -> {
-            mainMenuScene.setScene();
+            mainMenuScene.setScene(standardScene, masterController);
         });
 
     }

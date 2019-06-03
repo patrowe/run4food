@@ -1,8 +1,8 @@
 package gui;
 
+import controller.MasterController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -10,31 +10,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
-
 
 public class MainMenuScene extends StandardScene{
 
-    private Scene startScene;
     private Button registration, loginAsUser, loginAsGuest, order, about;
     private Label welcome, heading;
     private BorderPane borderPane;
     private VBox vBox;
     private HBox hBox;
-    private RegistrationScene registrationScene;
-    private GuestLoginScene guestLoginScene;
+    private UserRegistrationScene userRegistrationScene;
+    private GuestRegistrationScene guestRegistrationScene;
     private UserListScene userListScene;
     private AboutScene aboutScene;
 
-    MainMenuScene(Stage stage){
-        mainStage = stage;
-    }
-
-    public MainMenuScene(){
-
-    }
-
-    public void setScene(){
+    public void setScene(StandardScene standardScene, MasterController masterController){
 
         heading = new Label("Hauptmenü");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -82,28 +71,21 @@ public class MainMenuScene extends StandardScene{
         borderPane.setTop(heading);
         borderPane.setCenter(hBox);
 
-        startScene = new Scene(borderPane);
-
-        mainStage.setScene(startScene);
-        mainStage.setMaximized(false);
-        mainStage.setMaximized(true);
-        mainStage.show();
+        standardScene.setSceneContent(borderPane);
 
         registration.setOnAction(actionEvent -> {
-            registrationScene = new RegistrationScene();
-            registrationScene.setScene();
+            userRegistrationScene = new UserRegistrationScene();
+            userRegistrationScene.setScene(standardScene, masterController);
         });
 
         loginAsGuest.setOnAction(actionEvent -> {
-            guestLoginScene = new GuestLoginScene();
-            guestLoginScene.setScene();
+            guestRegistrationScene = new GuestRegistrationScene();
+            guestRegistrationScene.setScene(standardScene, masterController);
         });
 
         loginAsUser.setOnAction(actionEvent -> {
             userListScene = new UserListScene();
-            userListScene.setScene();
-            //DailyRoutineScene dailyRoutineScene = new DailyRoutineScene();
-            //dailyRoutineScene.setScene(mainStage);
+            userListScene.setScene(standardScene, masterController);
         });
 
         order.setOnAction(actionEvent -> {
@@ -112,7 +94,7 @@ public class MainMenuScene extends StandardScene{
 
         about.setOnAction(actionEvent -> {
             aboutScene = new AboutScene();
-            aboutScene.setScene();
+            aboutScene.setScene(standardScene, masterController);
         });
 
     }

@@ -1,9 +1,10 @@
 package gui;
 
+import com.sun.tools.javac.Main;
+import controller.MasterController;
 import controller.StartController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 
 public class UserListScene extends StandardScene{
 
-    private Scene scene;
     private Label heading;
     private Button backToMenu;
     private HBox hbox;
@@ -25,28 +25,23 @@ public class UserListScene extends StandardScene{
     private BorderPane borderPane;
     private ArrayList<String> nickList;
 
-    UserListScene(){
-        startController = new StartController();
-    }
-
-    public void setScene(){
+    public void setScene(StandardScene standardScene, MasterController masterController){
 
         heading = new Label("Profile");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
         heading.setMinHeight(100);
         heading.setPadding(new Insets(10));
 
-
-        startController = new StartController();
         nickList = new ArrayList<>();
-        nickList = startController.callLoadRegisteredUsers();
+        startController = new StartController(masterController);
+        nickList = startController.loadNicknames();
 
         vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(10);
 
         for(String nick : nickList){
-            vBox.getChildren().add(new StandardButton(nick));
+            vBox.getChildren().add(new ProfileListButton(nick, standardScene, masterController));
         }
 
 
@@ -64,13 +59,11 @@ public class UserListScene extends StandardScene{
         borderPane.setCenter(vBox);
         borderPane.setBottom(hbox);
 
-        scene = new Scene(borderPane);
-        mainStage.setScene(scene);
-        mainStage.setMaximized(false);
-        mainStage.setMaximized(true);
+        standardScene.setSceneContent(borderPane);
 
         backToMenu.setOnAction(actionEvent -> {
-            startController.openMainMenu();
+            MainMenuScene mainMenuScene = new MainMenuScene();
+            mainMenuScene.setScene(standardScene, masterController);
         });
     }
 }
