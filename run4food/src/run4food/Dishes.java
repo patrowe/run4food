@@ -1,12 +1,14 @@
 package run4food;
 
+
+
 import java.io.Serializable;
 
 public class Dishes implements Serializable {
 	private String name;
-	private Boolean lactose,vegetarian;
+	private Boolean lactose,vegetarian,gluten;
 	private int cal;
-	private float price;
+	private double price;
 	
 	protected void setName(String name) {
 		this.name = name;
@@ -39,11 +41,19 @@ public class Dishes implements Serializable {
 	protected Boolean getVegetarian() {
 		return this.vegetarian;
 	}
-	
-	protected void setPrice(float preis) {
+
+	protected void setGluten(Boolean glut) {
+		this.gluten = glut;
+	}
+
+	protected Boolean getGluten() {
+		return this.gluten;
+	}
+
+	protected void setPrice(double preis) {
 		this.price = preis;
 	}
-	protected float getPrice() {
+	protected double getPrice() {
 		 return this.price;
 	}
 

@@ -10,9 +10,9 @@ public class RegisteredUser extends User{
 	private Hashtable<String, Integer[]> diary;
 	
 	
-	public RegisteredUser(String userId, String surname, String firstname, String street, int postcode, String city, int phone, int age, String gender, int height, int weight, String preferedFood, ArrayList<String> incompatibilities ){
+	public RegisteredUser(String userId, String surname, String firstname, String street, int streetnumber, int postcode, String city, int phone, int age, String gender, int height, int weight, String preferedFood, ArrayList<String> incompatibilities ){
 		
-		super(surname, firstname, street, postcode, city, phone, age, gender, height, weight, preferedFood, incompatibilities);
+		super(surname, firstname, street, streetnumber, postcode, city, phone, age, gender, height, weight, preferedFood, incompatibilities);
 		this.userId = userId;
 		diary = new Hashtable<String, Integer[]>();
 	}

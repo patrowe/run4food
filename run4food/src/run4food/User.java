@@ -7,7 +7,6 @@ public class User implements Serializable{
 	
 	private String surname;
 	private String firstname;
-	
 	private int age;
 	private int weight; 
 	private int height;
@@ -20,13 +19,14 @@ public class User implements Serializable{
     private int phone;
 	private String preferedFood;
 	private ArrayList<String> incompatibilities;
-	
+	private Calculator calc;
   
 	
-	public User(String surname, String firstname, String street, int postcode, String city,int phone, int age, String gender,  int height, int weight, String preferedFood,  ArrayList<String> incompatibilities) {
+	public User(String surname, String firstname, String street, int streetnumber, int postcode, String city,int phone, int age, String gender,  int height, int weight, String preferedFood,  ArrayList<String> incompatibilities) {
         this.surname = surname;
         this.firstname = firstname;
         this.street = street;
+        this.streetNumber = streetnumber;
         this.postCode = postcode;
         this.city = city;
         this.phone = phone;
@@ -36,6 +36,7 @@ public class User implements Serializable{
         this.gender = gender;
         this.preferedFood = preferedFood;
         this.incompatibilities = incompatibilities;
+        calc = new Calculator();
     }
 	
 	public void setSurname (String surname){
@@ -97,8 +98,9 @@ public class User implements Serializable{
 		this.gender = gender;
 	}
 	
-	public void setBasalMetabolism(int bm) {
-		this.basalMetabolism = bm;
+	public void setBasalMetabolism() {
+		
+		basalMetabolism = calc.basalMetabolism(age, weight, height, gender);
 	}
 	
 	public int getBasalMetabolism() {
