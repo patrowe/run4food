@@ -1,38 +1,57 @@
 package controller;
 
-import run4food.DailyRoutine;
 import run4food.RegisteredUser;
+import run4food.User;
+import run4food.UserManagement;
+
 import java.util.ArrayList;
 
-public class StartController {
+/**
+ * @author Christoph
+ * Dies hier ist der Controller, der für den Vorgang bis zur DailyRoutine verantwortlich ist, also bis ein Nutzer sich registriert,
+ * eingeloggt oder ein Gast sich angemeldet hat.
+ */
+
+public class StartController{
 
     private ArrayList<RegisteredUser> registeredUsers;
     private ArrayList<String> nickList;
     private MasterController masterController;
-    private DailyRoutine dailyRoutine;
+    private UserManagement userManagement;
 
     public StartController(MasterController masterController){
         this.masterController = masterController;
+        this.userManagement = new UserManagement();
     }
 
+    /**
+     * Ein registeredUser wird erstellt und an das userManagement weitergegeben, wo er dann gespeichert wird. Außerdem wird
+     * der User beim masterController als aktiver Nutzer gespeichert.
+     */
     public void callSaveUser(String nick, String forename, String surname, String streetName, int streetNumber,
                              int postcode, String city, int phone, int age, String gender, int height, int weight,
                              String preferedFood, ArrayList<String> incompatibilities){
-        String street = streetName+streetNumber;
         try {
-            dailyRoutine = new DailyRoutine(masterController.user);
-            int basal = (int)dailyRoutine.basalMetabolism(age, weight, (double)height, gender);
-            RegisteredUser registeredUser = new RegisteredUser(surname, forename, street, age, weight, height, gender, nick, basal);
-            masterController.userManagement.saveUser(registeredUser);
+            RegisteredUser registeredUser = new RegisteredUser(nick, surname, forename, streetName, streetNumber,
+                    postcode, city, phone, age, gender, height, weight, preferedFood, incompatibilities);
+            this.userManagement.saveUser(registeredUser);
             masterController.setUser(registeredUser);
+            this.masterController.getDailyRoutineController().createDailyRoutine();
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
+    public void saveGuest(String forename, String surname, String street, int streetNumber, int postCode, String city,
+                          int phone, int age, String gender, int height, int weight, String preferedFood, ArrayList<String>incompatibilities){
+        User user = new User(forename, surname, street, streetNumber, postCode, city, phone, age, gender, height, weight, preferedFood, incompatibilities);
+        masterController.setUser(user);
+        this.masterController.getDailyRoutineController().createDailyRoutine();
+    }
+
     public ArrayList<String> loadNicknames(){
         try {
-            registeredUsers = masterController.userManagement.loadListe();
+            registeredUsers = this.userManagement.loadListe();
         }catch(Exception e){
             e.getMessage();
         }
@@ -45,7 +64,7 @@ public class StartController {
 
     private ArrayList<RegisteredUser> loadRegisteredUsers(){
         try {
-            return masterController.userManagement.loadListe();
+            return this.userManagement.loadListe();
         }catch(Exception e){
             e.printStackTrace();
             return null;
@@ -56,10 +75,18 @@ public class StartController {
         registeredUsers = this.loadRegisteredUsers();
         for(RegisteredUser user : registeredUsers){
             if(user.userId.equals(nickName)){
-                masterController.setUser(user);
+                this.masterController.setUser(user);
+                this.masterController.getDailyRoutineController().createDailyRoutine();
             }
         }
-        masterController.nickname = nickName;
+    }
+
+    public void callDeleteUser(){
+        try {
+            this.userManagement.deleteUser(((RegisteredUser) (this.masterController.getUser())).getUserId());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

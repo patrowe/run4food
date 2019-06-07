@@ -1,24 +1,20 @@
 package controller;
 
+import run4food.RegisteredUser;
 import run4food.User;
 import run4food.UserManagement;
 
 public class MasterController {
 
-    String nickname;
-    UserManagement userManagement;
-    User user;
+    private StartController startController;
+    private DailyRoutineController dailyRoutineController;
+    private OrderController orderController;
+    private User user;
 
     public MasterController(){
-        userManagement = new UserManagement();
-    }
-
-    public void setNickname(String string){
-        this.nickname = string;
-    }
-
-    public String getNickname(){
-        return this.nickname;
+        startController = new StartController(this);
+        dailyRoutineController = new DailyRoutineController(this);
+        orderController = new OrderController(this);
     }
 
     public void setUser(User user){
@@ -29,5 +25,20 @@ public class MasterController {
         return user;
     }
 
+    public String getNickname(){
+        RegisteredUser registeredUser = (RegisteredUser)this.user;
+        return registeredUser.getUserId();
+    }
 
+    public StartController getStartController() {
+        return this.startController;
+    }
+
+    public DailyRoutineController getDailyRoutineController() {
+        return this.dailyRoutineController;
+    }
+
+    public OrderController getOrderController() {
+        return this.orderController;
+    }
 }

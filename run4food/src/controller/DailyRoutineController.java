@@ -1,32 +1,44 @@
 package controller;
 
 import run4food.DailyRoutine;
+import run4food.RegisteredUser;
+
+import java.util.Hashtable;
 
 public class DailyRoutineController {
 
-    private double basalMetabolism;
+    private DailyRoutine dailyRoutine;
+    private MasterController masterController;
 
-    public String getNickname(MasterController masterController){
-        return masterController.getNickname();
+    public DailyRoutineController(MasterController masterController){
+        this.masterController = masterController;
     }
 
-    public double callBasalMetabolism(int age, double weight, double height, String gender){
-        //basalMetabolism = dailyRoutine.basalMetabolism(age, weight, height, gender);
-        return basalMetabolism;
+    public void createDailyRoutine(){
+        this.dailyRoutine = new DailyRoutine(this.masterController.getUser());
     }
 
-    public void callCalculateSteps(int steps, MasterController masterController){
-        DailyRoutine dailyRoutine = new DailyRoutine(masterController.user);
-        dailyRoutine.calculateSteps(steps);
+    public void callCalculateSteps(int steps){
+        this.dailyRoutine.calculateSteps(steps);
     }
 
     public void callCalculateActivity(String activity, int durationHours, int durationMintues){
-        //dailyRoutine.calculateActivity(activity, durationHours, durationMintues);
+        double a = (durationHours + (durationMintues/60));
+        this.dailyRoutine.calculateActivity(activity, a);
     }
 
-    public String getFreeCalories(MasterController mastercontroller){
-        DailyRoutine dailyRoutine = new DailyRoutine(mastercontroller.user);
-        Double freeCalories = dailyRoutine.getFreeCalory();
+    public void callCalculateEatenCalories(String food, int quantity){
+        this.dailyRoutine.calculateConsumption(food, quantity);
+        this.dailyRoutine.calculateFreeCalorie();
+    }
+
+    public void callCalculateOwnCalories(int ownCalories){
+        this.dailyRoutine.calculateOwnCalorie(ownCalories);
+    }
+
+    public String getFreeCalories(){
+        this.dailyRoutine.calculateFreeCalorie();
+        int freeCalories =  this.dailyRoutine.getFreeCalorie();
         return String.valueOf(freeCalories);
     }
 
@@ -42,6 +54,13 @@ public class DailyRoutineController {
         if((a == 0) & (b == 0)){
             throw new NoSenseException("Das ergibt keinen Sinn.");
         }
+    }
+
+    public void callUpdateDiary(){
+        dailyRoutine.updateDiary();
+        RegisteredUser regUser = (RegisteredUser)this.masterController.getUser();
+        Hashtable a=regUser.getDiary();
+        System.out.println("test" + a.get(0));
     }
 
 
