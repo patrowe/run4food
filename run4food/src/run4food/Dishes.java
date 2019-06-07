@@ -1,20 +1,19 @@
 package run4food;
 
-
-
 import java.io.Serializable;
 
 public class Dishes implements Serializable {
 	private String name;
-	private Boolean lactose,vegetarian,gluten;
+	private Boolean lactose,vegetarian,gluten,vegan,weizen;
 	private int cal;
 	private double price;
+	static final long serialVersionUID= 42L; 
 	
 	protected void setName(String name) {
 		this.name = name;
 	}
 
-	protected String getName() {
+	public String getName() {
 		return this.name;
 	}
 
@@ -22,15 +21,31 @@ public class Dishes implements Serializable {
 		this.cal = cal;
 	}
 
-	protected int getCal() {
+	public int getCal() {
 		return this.cal;
 	}
 
+	protected void setVegan(boolean b) {
+		this.vegan = b;
+	}
+
+	public boolean getVegan() {
+		return this.vegan;
+	}
+
+	protected void setWeizen(boolean b) {
+		this.weizen = b;
+	}
+
+	public boolean getWeizen() {
+		return this.weizen;
+	}
+	
 	protected void setLactose(Boolean lac) {
 		this.lactose = lac;
 	}
 
-	protected Boolean getLactose() {
+	public Boolean getLactose() {
 		return this.lactose;
 	}
 
@@ -38,7 +53,7 @@ public class Dishes implements Serializable {
 		this.vegetarian = veg;
 	}
 
-	protected Boolean getVegetarian() {
+	public Boolean getVegetarian() {
 		return this.vegetarian;
 	}
 
@@ -46,14 +61,14 @@ public class Dishes implements Serializable {
 		this.gluten = glut;
 	}
 
-	protected Boolean getGluten() {
+	public Boolean getGluten() {
 		return this.gluten;
 	}
 
 	protected void setPrice(double preis) {
 		this.price = preis;
 	}
-	protected double getPrice() {
+	public double getPrice() {
 		 return this.price;
 	}
 

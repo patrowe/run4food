@@ -1,6 +1,5 @@
+
 package run4food;
-
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,10 +7,12 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MenuCard {
 	private File f = new File("MenuKarte.bin");
 	int auswahl = 1;
+	static final long serialVersionUID = 42L;
 	ArrayList<Dishes> menu_list = new ArrayList<Dishes>();
 	ObjectOutputStream oos;
 
@@ -66,21 +67,52 @@ public class MenuCard {
 
 	}
 
-	public ArrayList<Dishes> filterCard(int a) throws Exception { // wenn 1 lactose,2 vegetarisch, 3 Gluten
+	public ArrayList<Dishes> filterCard(ArrayList<Integer> arr) throws Exception { // wenn 1 lactose,2 vegetarisch, 3
+																					// Gluten
 		this.menu_list = this.loadCard();
-		ArrayList<Dishes> userRead = new ArrayList<Dishes>();
-		if (a == 1) {
-			for (int i = 0; i < this.menu_list.size(); i++)
-				if (this.menu_list.get(i).getLactose() == true)
-					userRead.add(this.menu_list.get(i));
-		} else if (a == 2) {
-			for (int i = 0; i < this.menu_list.size(); i++)
-				if (this.menu_list.get(i).getVegetarian() == true)
-					userRead.add(this.menu_list.get(i));
-		} else if (a == 3) {
-			for (int i = 0; i < this.menu_list.size(); i++)
-				if (this.menu_list.get(i).getGluten() == true)
-					userRead.add(this.menu_list.get(i));
+		ArrayList<Dishes> userRead = this.menu_list;
+		for (int a : arr) {
+			if (a == 1) {
+				for (Iterator<Dishes> it = userRead.iterator(); it.hasNext();) {
+					if (it.next().getLactose()) {
+
+						it.remove();
+					}
+				}
+			}
+
+			if (a == 2) {
+				for (Iterator<Dishes> it = userRead.iterator(); it.hasNext();) {
+					if (!it.next().getVegetarian()) {
+
+						it.remove();
+					}
+				}
+			}
+			if (a == 3) {
+				for (Iterator<Dishes> it = userRead.iterator(); it.hasNext();) {
+					if (it.next().getGluten()) {
+
+						it.remove();
+					}
+				}
+			}
+			if (a == 4) {
+				for (Iterator<Dishes> it = userRead.iterator(); it.hasNext();) {
+					if (!it.next().getVegan()) {
+
+						it.remove();
+					}
+				}
+			}
+			if (a == 5) {
+				for (Iterator<Dishes> it = userRead.iterator(); it.hasNext();) {
+					if (it.next().getWeizen()) {
+
+						it.remove();
+					}
+				}
+			}
 		}
 
 		return userRead;
@@ -123,8 +155,7 @@ public class MenuCard {
 		int rightIndex = midIndex + 1;
 
 		while (leftIndex <= midIndex && rightIndex <= endIndex) {
-			if (this.auswahl==1)
-			{
+			if (this.auswahl == 1) {
 				if (menu_list.get(leftIndex).getPrice() <= menu_list.get(rightIndex).getPrice()) {
 					mergedSortedArray.add(menu_list.get(leftIndex));
 					leftIndex++;
@@ -133,9 +164,18 @@ public class MenuCard {
 					rightIndex++;
 				}
 			}
-			if (this.auswahl==2)
-			{
+			if (this.auswahl == 2) {
 				if (menu_list.get(leftIndex).getCal() <= menu_list.get(rightIndex).getCal()) {
+					mergedSortedArray.add(menu_list.get(leftIndex));
+					leftIndex++;
+				} else {
+					mergedSortedArray.add(menu_list.get(rightIndex));
+					rightIndex++;
+				}
+			}
+
+			if (this.auswahl == 3) {
+				if (menu_list.get(leftIndex).getName().compareTo(menu_list.get(rightIndex).getName()) < 0) {
 					mergedSortedArray.add(menu_list.get(leftIndex));
 					leftIndex++;
 				} else {
