@@ -9,7 +9,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import java.util.regex.Pattern;
 
+/**
+ * @author Christoph
+ * Diese Klasse erstellt alle GUI-Elemente, die sowohl bei der Registrierung des Users, als auch beim Login als Gast benötigt
+ * werden.
+ * Labels mit dem Zusatz "Error" sind Labels, durch die eine Fehlermeldung ausgegeben werden soll, wenn der Nutzer z.B.
+ * Zahlen statt Buchstaben eingibt.
+ * Labels mit dem Zusatz "Hint" sind Labels, die deutlich machen sollen, wofür das darüberliegende Textfeld bestimmt ist.
+ */
 public class RegistrationScene extends StandardScene{
 
     BorderPane registrationBorderPane;
@@ -19,11 +28,10 @@ public class RegistrationScene extends StandardScene{
     Label registrationTitle, questionNickname, questionName, questionLiving, questionGender, questionPhone,
             questionAge, questionweight, questionHeight, questionPreferedFood, questionIncompatibility;
     private ErrorLabel nameError, streetError, cityError, phoneError, ageError, heightError, weightError;
-    NameTextField forenameTextField, surnameTextField, streetNameTextField, cityTextField;
-    NumberTextField streetNumberTextField, postcodeTextField, phoneTextField, ageTextField, weightTextField, heightTextField;
+    TextField forenameTextField, surnameTextField, streetNameTextField, cityTextField, streetNumberTextField, postcodeTextField, phoneTextField, ageTextField, weightTextField, heightTextField;
     LabelRegistrationHints forenameHint, surnameHint, streetNameHint, streetNumberHint, postcodeHint, cityHint, ageHint, phoneHint, heightHint, weightHint;
     CheckBox gluten, wheat, lactose;
-    RadioButton veggie, vegan, eatAll, male, female, diverse;
+    RadioButton veggie, vegan, eatAll, male, female;
     ToggleGroup optionsPreferedFood, optionsGender;
     Button registrationCancel;
     MainMenuScene mainMenuScene;
@@ -45,20 +53,49 @@ public class RegistrationScene extends StandardScene{
 
         nameError = new ErrorLabel();
 
-        forenameTextField = new NameTextField("", nameError);
+        final Pattern namePattern = Pattern.compile("^(|[A-Z][a-z]*)");
+
+        TextFormatter<?> forenameFormatter = new TextFormatter<>(change -> {
+            if(namePattern.matcher(change.getControlNewText()).matches()) {
+                nameError.setText("");
+                return change;
+            }else{
+                nameError.setText("Failed");
+                nameError.setRed();
+                return null;
+            }
+        });
+
+        forenameTextField = new TextField();
+        forenameTextField.setMinHeight(35);
+        forenameTextField.setMinWidth(200);
+        forenameTextField.setTextFormatter(forenameFormatter);
+
+        TextFormatter<?> surnameFormatter = new TextFormatter<>(change -> {
+            if(namePattern.matcher(change.getControlNewText()).matches()) {
+                nameError.setText("");
+                return change;
+            }else{
+                nameError.setText("Failed");
+                nameError.setRed();
+                return null;
+            }
+        });
+
+        surnameTextField = new TextField();
+        surnameTextField.setMinHeight(35);
+        surnameTextField.setMinWidth(200);
+        surnameTextField.setTextFormatter(surnameFormatter);
 
         forenameHint = new LabelRegistrationHints("(Vorname)", 200);
-
-        surnameTextField = new NameTextField("", nameError);
-
         surnameHint = new LabelRegistrationHints("(Nachname)", 200);
 
         nameHBox = new HBox();
-        nameHBox.setSpacing(20);
+        nameHBox.setSpacing(35);
         nameHBox.getChildren().addAll(forenameTextField, surnameTextField, nameError);
 
         nameHints = new HBox();
-        nameHints.setSpacing(20);
+        nameHints.setSpacing(35);
         nameHints.getChildren().addAll(forenameHint, surnameHint);
 
         questionLiving = new Label("Wo lebst du?");
@@ -67,9 +104,41 @@ public class RegistrationScene extends StandardScene{
 
         streetError = new ErrorLabel();
 
-        streetNameTextField = new NameTextField("", streetError);
+        Pattern streetNamePattern = Pattern.compile("^(|[A-Z][a-z]*\\.?)");
 
-        streetNumberTextField = new NumberTextField("", streetError);
+        TextFormatter<?> streetNameFormatter = new TextFormatter<>(change -> {
+            if(streetNamePattern.matcher(change.getControlNewText()).matches()) {
+                streetError.setText("");
+                return change;
+            }else{
+                streetError.setText("Failed");
+                streetError.setRed();
+                return null;
+            }
+        });
+
+        streetNameTextField = new TextField();
+        streetNameTextField.setMinHeight(35);
+        streetNameTextField.setMinWidth(200);
+        streetNameTextField.setTextFormatter(streetNameFormatter);
+
+        Pattern streetNumberPattern = Pattern.compile("(|^[1-9]\\d{0,2}$)");
+
+        TextFormatter<?> streetNumberFormatter = new TextFormatter<>(change -> {
+            if(streetNumberPattern.matcher(change.getControlNewText()).matches()) {
+                streetError.setText("");
+                return change;
+            }else{
+                streetError.setText("Failed");
+                streetError.setRed();
+                return null;
+            }
+        });
+
+        streetNumberTextField = new TextField();
+        streetNumberTextField.setMinHeight(35);
+        streetNumberTextField.setMinWidth(200);
+        streetNumberTextField.setTextFormatter(streetNumberFormatter);
 
         streetHBox = new HBox();
         streetHBox.setSpacing(20);
@@ -84,9 +153,38 @@ public class RegistrationScene extends StandardScene{
 
         cityError = new ErrorLabel();
 
-        postcodeTextField = new NumberTextField("", cityError);
+        final Pattern zipcodePattern = Pattern.compile("(|[1-9]\\d{0,4})");
+        TextFormatter<?> zipCodeFormatter = new TextFormatter<>(change -> {
+            if(zipcodePattern.matcher(change.getControlNewText()).matches()) {
+                cityError.setText("");
+                return change;
+            }else{
+                cityError.setText("Failed");
+                cityError.setRed();
+                return null;
+                }
+        });
 
-        cityTextField = new NameTextField("", cityError);
+        postcodeTextField = new TextField();
+        postcodeTextField.setMinHeight(35);
+        postcodeTextField.setMinWidth(200);
+        postcodeTextField.setTextFormatter(zipCodeFormatter);
+
+        TextFormatter<?> cityFormatter = new TextFormatter<>(change -> {
+            if(namePattern.matcher(change.getControlNewText()).matches()) {
+                cityError.setText("");
+                return change;
+            }else{
+                cityError.setText("Failed");
+                cityError.setRed();
+                return null;
+            }
+        });
+
+        cityTextField = new TextField();
+        cityTextField.setMinHeight(35);
+        cityTextField.setMinWidth(200);
+        cityTextField.setTextFormatter(cityFormatter);
 
         cityHBox = new HBox();
         cityHBox.setSpacing(20);
@@ -103,9 +201,25 @@ public class RegistrationScene extends StandardScene{
         questionPhone.setFont(Font.font("Calibri", 25));
         questionPhone.setMinHeight(50);
 
+        Pattern phonePattern = Pattern.compile("^\\+?[0-9]*");
+
+        TextFormatter<?> phoneFormatter = new TextFormatter<>(change -> {
+            if(phonePattern.matcher(change.getControlNewText()).matches()) {
+                phoneError.setText("");
+                return change;
+            }else{
+                phoneError.setText("Failed");
+                phoneError.setRed();
+                return null;
+            }
+        });
+
         phoneError = new ErrorLabel();
 
-        phoneTextField = new NumberTextField("", phoneError);
+        phoneTextField = new TextField();
+        phoneTextField.setMinHeight(35);
+        phoneTextField.setMinWidth(200);
+        phoneTextField.setTextFormatter(phoneFormatter);
 
         phoneHint = new LabelRegistrationHints("(Telefonnummer)", 200);
 
@@ -117,9 +231,23 @@ public class RegistrationScene extends StandardScene{
         questionAge.setFont(Font.font("Calibri", 25));
         questionAge.setMinHeight(50);
 
+        TextFormatter<?> ageFormatter = new TextFormatter<>(change -> {
+            if(streetNumberPattern.matcher(change.getControlNewText()).matches()) {
+                ageError.setText("");
+                return change;
+            }else{
+                ageError.setText("Failed");
+                ageError.setRed();
+                return null;
+            }
+        });
+
         ageError = new ErrorLabel();
 
-        ageTextField = new NumberTextField("", ageError);
+        ageTextField = new TextField();
+        ageTextField.setMinHeight(35);
+        ageTextField.setMinWidth(200);
+        ageTextField.setTextFormatter(ageFormatter);
 
         ageHBox = new HBox();
         ageHBox.setSpacing(20);
@@ -141,18 +269,13 @@ public class RegistrationScene extends StandardScene{
         female.setMinHeight(50);
         female.setMinWidth(100);
 
-        diverse = new RadioButton("Divers");
-        diverse.setFont(Font.font("Calibri", 20));
-        diverse.setMinHeight(50);
-        diverse.setMinWidth(100);
-
         optionsGender = new ToggleGroup();
-        optionsGender.getToggles().addAll(male, female, diverse);
+        optionsGender.getToggles().addAll(male, female);
 
         gender = new HBox();
         gender.setAlignment(Pos.CENTER);
         gender.setSpacing(20);
-        gender.getChildren().addAll(male, female, diverse);
+        gender.getChildren().addAll(male, female);
 
         questionHeight = new Label("Wie groß bist du?");
         questionHeight.setFont(Font.font("Calibri", 25));
@@ -160,13 +283,27 @@ public class RegistrationScene extends StandardScene{
 
         heightError = new ErrorLabel();
 
-        heightTextField = new NumberTextField("", heightError);
+        TextFormatter<?> heightFormatter = new TextFormatter<>(change -> {
+            if(streetNumberPattern.matcher(change.getControlNewText()).matches()) {
+                heightError.setText("");
+                return change;
+            }else{
+                heightError.setText("Failed");
+                heightError.setRed();
+                return null;
+            }
+        });
+
+        heightTextField = new TextField();
+        heightTextField.setMinHeight(35);
+        heightTextField.setMinWidth(200);
+        heightTextField.setTextFormatter(heightFormatter);
 
         heightHBox = new HBox();
         heightHBox.setSpacing(20);
         heightHBox.getChildren().addAll(heightTextField, heightError);
 
-        heightHint = new LabelRegistrationHints("(Körpergröße)", 200);
+        heightHint = new LabelRegistrationHints("(Körpergröße in cm)", 200);
 
         questionweight = new Label("Was für ein Gewicht zeigt deine Waage an?");
         questionweight.setFont(Font.font("Calibri", 25));
@@ -174,13 +311,27 @@ public class RegistrationScene extends StandardScene{
 
         weightError = new ErrorLabel();
 
-        weightTextField = new NumberTextField("", weightError);
+        TextFormatter<?> weightFormatter = new TextFormatter<>(change -> {
+            if(streetNumberPattern.matcher(change.getControlNewText()).matches()) {
+                weightError.setText("");
+                return change;
+            }else{
+                weightError.setText("Failed");
+                weightError.setRed();
+                return null;
+            }
+        });
+
+        weightTextField = new TextField();
+        weightTextField.setMinHeight(35);
+        weightTextField.setMinWidth(200);
+        weightTextField.setTextFormatter(weightFormatter);
 
         weightHBox = new HBox();
         weightHBox.setSpacing(20);
         weightHBox.getChildren().addAll(weightTextField, weightError);
 
-        weightHint = new LabelRegistrationHints("(Körpergewicht)", 200);
+        weightHint = new LabelRegistrationHints("(Körpergewicht in kg)", 200);
 
         questionPreferedFood = new Label("Auf was achtest du beim Essen?");
         questionPreferedFood.setFont(Font.font("Calibri", 25));
@@ -242,8 +393,6 @@ public class RegistrationScene extends StandardScene{
         registrationButtons.setMinHeight(75);
         registrationButtons.getChildren().add(registrationCancel);
 
-        // Adding of all components to the panes and finally to the scene
-
         registrationVBox = new VBox();
 
         registrationHBox = new HBox();
@@ -261,7 +410,9 @@ public class RegistrationScene extends StandardScene{
         registrationBorderPane.setCenter(registrationScrollPane);
         registrationBorderPane.setBottom(registrationButtons);
 
-        // ActionListeners for the buttons
+        /**
+         * Hier kommt der ActionListener bzw. handler, der dafür sorgt, dass der Nutzer zum Menü zurückkehren kann.
+         */
 
         registrationCancel.setOnAction(actionEvent -> {
             mainMenuScene = new MainMenuScene();

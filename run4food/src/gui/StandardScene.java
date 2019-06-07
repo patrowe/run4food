@@ -9,7 +9,14 @@ class StandardScene {
 
     private Stage mainStage;
     private Scene mainScene;
+    private RegistrationScene registrationScene;
+    private UserRegistrationScene userRegistrationScene;
+    private GuestRegistrationScene guestRegistrationScene;
+    private DailyRoutineScene dailyRoutineScene;
 
+    StandardScene(){
+
+    }
 
     StandardScene(Stage stage){
         this.mainStage = stage;
@@ -18,10 +25,26 @@ class StandardScene {
         this.mainStage.setTitle("WeRun4Food");
         this.mainStage.setMaximized(true);
         this.mainStage.show();
+        registrationScene = new RegistrationScene();
+        userRegistrationScene = new UserRegistrationScene();
+        guestRegistrationScene = new GuestRegistrationScene();
+        dailyRoutineScene = new DailyRoutineScene();
     }
 
-    StandardScene(){
+    public RegistrationScene getRegistrationScene() {
+        return registrationScene;
+    }
 
+    public UserRegistrationScene getUserRegistrationScene() {
+        return userRegistrationScene;
+    }
+
+    public GuestRegistrationScene getGuestRegistrationScene() {
+        return guestRegistrationScene;
+    }
+
+    public DailyRoutineScene getDailyRoutineScene() {
+        return dailyRoutineScene;
     }
 
     void setSceneContent(Parent parent){

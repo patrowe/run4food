@@ -21,11 +21,13 @@ public class UserListScene extends StandardScene{
     private Button backToMenu;
     private HBox hbox;
     private VBox vBox;
-    private StartController startController;
     private BorderPane borderPane;
     private ArrayList<String> nickList;
+    private MasterController masterController;
 
     public void setScene(StandardScene standardScene, MasterController masterController){
+
+        this.masterController = masterController;
 
         heading = new Label("Profile");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -33,15 +35,14 @@ public class UserListScene extends StandardScene{
         heading.setPadding(new Insets(10));
 
         nickList = new ArrayList<>();
-        startController = new StartController(masterController);
-        nickList = startController.loadNicknames();
+        nickList = masterController.getStartController().loadNicknames();
 
         vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(10);
 
         for(String nick : nickList){
-            vBox.getChildren().add(new ProfileListButton(nick, standardScene, masterController));
+            vBox.getChildren().add(new ProfileListButton(nick, standardScene, this.masterController));
         }
 
 
