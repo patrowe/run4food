@@ -161,6 +161,7 @@ public class MenuCardScene extends StandardScene{
         shoppingCartLabel.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
 
         changeCartButton = new Button("Ändern");
+        changeCartButton.setVisible(false);
 
         shoppingCartVBox = new VBox();
         shoppingCartVBox.setMinWidth(250);
@@ -212,6 +213,7 @@ public class MenuCardScene extends StandardScene{
         });
 
         goBackToDaily.setOnAction(actionEvent -> {
+            this.masterController.getOrderController().deleteShoppingCart();
             DailyRoutineScene dailyRoutineScene = new DailyRoutineScene();
             dailyRoutineScene.setScene(this.standardScene, this.masterController);
         });
@@ -226,23 +228,28 @@ public class MenuCardScene extends StandardScene{
         });
 
         addToCart.setOnAction(actionEvent -> {
-            Iterator iterator = quantityVBox.getChildren().iterator();
-            int index = 0;
-            while(iterator.hasNext()){
-                OrderTextfield orderTextfield = (OrderTextfield) iterator.next();
-                if(!(orderTextfield.getText().equals(""))){
+            Iterator it1 = quantityVBox.getChildren().iterator();
+            Iterator it2 = nameVBox.getChildren().iterator();
+
+            ArrayList<String> quantityList = new ArrayList<>();
+            ArrayList<String> nameList = new ArrayList<>();
+
+            while(it1.hasNext()){
+                quantityList.add(((OrderTextfield)it1.next()).getText());
+                nameList.add(((DishLabel)it2.next()).getText());
+            }
+            for(int i = 0; i < quantityList.size(); i++) {
+                if (!(quantityList.get(i).equals(""))){
                     try {
-                        int quantity = Integer.parseInt(((OrderTextfield) quantityVBox.getChildren().get(index)).getText());
-                        this.masterController.getOrderController().callChangeCart(index, quantity);
+                        int quantity = Integer.parseInt(quantityList.get(i));
+                        this.masterController.getOrderController().callChangeCart(nameList.get(i), quantity);
                         freeCalories.setText("Verfügbare Kalorien: " + this.masterController.getOrderController().getAvailableCalories());
-                        this.updateLocalShoppingCart();
                     }catch(NumberFormatException e){
                         e.printStackTrace();
                     }
-
                 }
-                index++;
             }
+            this.updateLocalShoppingCart();
             if(somebodyIsLoggedIn){
                 this.updateMenuCardForLoggedIn();
             }else{
@@ -251,7 +258,32 @@ public class MenuCardScene extends StandardScene{
         });
 
         changeCartButton.setOnAction(actionEvent -> {
+            Iterator it1 = quantityListVBox.getChildren().iterator();
+            Iterator it2 = nameListVBox.getChildren().iterator();
 
+            ArrayList<String> quantityList = new ArrayList<>();
+            ArrayList<String> nameList = new ArrayList<>();
+            while(it1.hasNext()){
+                quantityList.add(((OrderTextfield)it1.next()).getText());
+                nameList.add(((PreviewLabel)it2.next()).getText());
+            }
+            for(int i = 0; i < quantityList.size(); i++) {
+                if (!(quantityList.get(i).equals(""))){
+                    try {
+                        int quantity = Integer.parseInt(quantityList.get(i));
+                        this.masterController.getOrderController().callChangeCart(nameList.get(i), quantity);
+                        freeCalories.setText("Verfügbare Kalorien: " + this.masterController.getOrderController().getAvailableCalories());
+                    }catch(NumberFormatException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            this.updateLocalShoppingCart();
+            if(somebodyIsLoggedIn){
+                this.updateMenuCardForLoggedIn();
+            }else{
+                this.updateMenuCardForNotLoggedIn();
+            }
         });
     }
 
@@ -293,7 +325,6 @@ public class MenuCardScene extends StandardScene{
         priceVBox.getChildren().clear();
 
         for(int i = 0; i < dishAvailability.size(); i++){
-            System.out.println(dishAvailability.get(i));
             if(dishAvailability.get(i)){
                 nameVBox.getChildren().add(new DishLabel(dishNames.get(i)));
                 quantityVBox.getChildren().add(new OrderTextfield(""));
@@ -317,9 +348,15 @@ public class MenuCardScene extends StandardScene{
         ArrayList<String> priceList = this.masterController.getOrderController().getPriceList();
         ArrayList<Integer> quantityList = this.masterController.getOrderController().getQuantityList();
 
+        if(nameList.size()>0){
+            changeCartButton.setVisible(true);
+        }else{
+            changeCartButton.setVisible(false);
+        }
+
         for(int i = 0; i < nameList.size(); i++){
-            nameListVBox.getChildren().add(new Label(nameList.get(i)));
-            priceListVBox.getChildren().add(new Label(priceList.get((i))));
+            nameListVBox.getChildren().add(new PreviewLabel(nameList.get(i)));
+            priceListVBox.getChildren().add(new PreviewLabel(priceList.get((i))));
             quantityListVBox.getChildren().add(new OrderTextfield(String.valueOf(quantityList.get(i))));
         }
     }
