@@ -11,6 +11,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+/**
+ * @author Christoph Klassen
+ */
+
 public class MainMenuScene extends StandardScene{
 
     private Button registration, loginAsUser, loginAsGuest, order, about;
@@ -22,8 +26,19 @@ public class MainMenuScene extends StandardScene{
     private GuestRegistrationScene guestRegistrationScene;
     private UserListScene userListScene;
     private AboutScene aboutScene;
+    private StandardScene standardScene;
+    private MasterController masterController;
 
     public void setScene(StandardScene standardScene, MasterController masterController){
+
+        this.standardScene = standardScene;
+        this.masterController = masterController;
+        this.userRegistrationScene = standardScene.getUserRegistrationScene();
+        this.guestRegistrationScene = standardScene.getGuestRegistrationScene();
+
+        /**
+         * Aufbau der GUI-Elemente
+         */
 
         heading = new Label("Hauptmenü");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -71,21 +86,26 @@ public class MainMenuScene extends StandardScene{
         borderPane.setTop(heading);
         borderPane.setCenter(hBox);
 
-        standardScene.setSceneContent(borderPane);
+        //Hier wird der Inhalt der standardScene geändert. Damit aktualisiert sich der Inhalt des Fensters.
+        this.standardScene.setSceneContent(borderPane);
+
+        /**
+         * Hier kommen die ActionListener für die Buttons, damit diese eine Funktion bekommen.
+         */
 
         registration.setOnAction(actionEvent -> {
             userRegistrationScene = new UserRegistrationScene();
-            userRegistrationScene.setScene(standardScene, masterController);
+            userRegistrationScene.setScene(this.standardScene, this.masterController);
         });
 
         loginAsGuest.setOnAction(actionEvent -> {
-            guestRegistrationScene = new GuestRegistrationScene();
-            guestRegistrationScene.setScene(standardScene, masterController);
+            this.guestRegistrationScene = new GuestRegistrationScene();
+            this.guestRegistrationScene.setScene(this.standardScene, this.masterController);
         });
 
         loginAsUser.setOnAction(actionEvent -> {
             userListScene = new UserListScene();
-            userListScene.setScene(standardScene, masterController);
+            userListScene.setScene(this.standardScene, this.masterController);
         });
 
         order.setOnAction(actionEvent -> {
@@ -94,7 +114,7 @@ public class MainMenuScene extends StandardScene{
 
         about.setOnAction(actionEvent -> {
             aboutScene = new AboutScene();
-            aboutScene.setScene(standardScene, masterController);
+            aboutScene.setScene(this.standardScene, this.masterController);
         });
 
     }

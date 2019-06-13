@@ -13,7 +13,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import run4food.Lexicon;
-
 import java.text.DateFormat;
 import java.util.*;
 
@@ -25,7 +24,7 @@ public class DailyRoutineScene extends StandardScene{
             calories, activityError;
     private ErrorLabel stepsError, ownCaloriesError, eatenCaloriesError;
     private String dateAsString;
-    private NumberTextField steps, ownCalories;
+    private TextField steps, ownCalories;
     private Button calculateSteps, calculateActivities, calculateEatenCalories, calculateOwnCalories, order, backToMenu, editProfile, orderHistory, weekOverview;
     private VBox vBox, eatenCaloriesFoodList, eatenCaloriesTextFieldList, activityList, activityDurationHoursList, activityDurationMinutesList, activityTitledPaneContent;
     private HBox dateHBox, stepsHBox, activityHBox, activityLabelHBox, activityUIElementHbox, eatenCaloriesHBox, eatenCaloriesUIElementHBox, ownCaloriesHBox, navigationHBox;
@@ -33,18 +32,17 @@ public class DailyRoutineScene extends StandardScene{
     private TitledPane activityTitledPane, eatenCaloriesTitledPane;
     private BorderPane borderpane;
     private MainMenuScene mainMenuScene;
-    private DailyRoutineController dailyRoutineController;
-    private int basalmetabolism;
+    private ProfileEditScene profileEditScene;
     private MasterController masterController;
 
     public DailyRoutineScene(){
         mainMenuScene = new MainMenuScene();
-        dailyRoutineController = new DailyRoutineController();
     }
 
-    public void setScene(StandardScene standardScene, MasterController mController){
+    public void setScene(StandardScene standardScene, MasterController masterController){
 
-        this.masterController = mController;
+        this.masterController = masterController;
+        this.masterController.getOrderController().loadDishes();
 
         heading = new Label("Dash Board");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
@@ -62,11 +60,10 @@ public class DailyRoutineScene extends StandardScene{
         dateHBox.setAlignment(Pos.TOP_RIGHT);
         dateHBox.getChildren().add(actualdate);
 
-        nameLabel = new Label("Hallo " + dailyRoutineController.getNickname(masterController) + ", schön, dass du da bist!");
+        nameLabel = new Label("Hallo " + this.masterController.getUser().getFirstname() + ", schön, dass du da bist!");
         nameLabel.setFont(Font.font("Calibri", 25));
         nameLabel.setMinHeight(50);
 
-        basalmetabolism = 1500;
         basalmetabolismLabel = new Label("Dein Grundumsatz beträgt: " + masterController.getUser().getBasalMetabolism() + ".");
         basalmetabolismLabel.setFont(Font.font("Calibri", 25));
         basalmetabolismLabel.setMinHeight(50);
@@ -79,7 +76,7 @@ public class DailyRoutineScene extends StandardScene{
         stepsLabel.setFont(Font.font("Calibri", 15));
         stepsLabel.setMinHeight(50);
 
-        steps = new NumberTextField("0", stepsError);
+        steps = new TextField();
         steps.setMinHeight(25);
         steps.setMaxWidth(60);
         steps.setFont(Font.font("Calibri", 12));
@@ -185,7 +182,7 @@ public class DailyRoutineScene extends StandardScene{
 
         for(String s : lexicon.getFood2calory().keySet()){
             eatenCaloriesFoodList.getChildren().add(new EatenCaloriesCheckBox(s));
-            eatenCaloriesTextFieldList.getChildren().add(new NumberTextField("0", eatenCaloriesError));
+            eatenCaloriesTextFieldList.getChildren().add(new TextField());
         }
 
         eatenCaloriesHBox = new HBox();
@@ -219,7 +216,7 @@ public class DailyRoutineScene extends StandardScene{
         ownCaloriesLabel.setFont(Font.font("Calibri", 15));
         ownCaloriesLabel.setMinHeight(50);
 
-        ownCalories = new NumberTextField("0", ownCaloriesError);
+        ownCalories = new TextField();
         ownCalories.setMinHeight(25);
         ownCalories.setMaxWidth(40);
         ownCalories.setFont(Font.font("Calibri", 12));
@@ -238,7 +235,7 @@ public class DailyRoutineScene extends StandardScene{
         ownCaloriesHBox.setAlignment(Pos.CENTER);
         ownCaloriesHBox.setSpacing(20);
 
-        calories = new Label("Du darfst noch Essen mit " + dailyRoutineController.getFreeCalories(masterController) + " Kalorien bestellen.");
+        calories = new Label("Du darfst noch Essen mit " + this.masterController.getDailyRoutineController().getFreeCalories() + " Kalorien bestellen.");
         calories.setFont(Font.font("Calibri", 25));
         calories.setMinHeight(50);
 
@@ -289,9 +286,9 @@ public class DailyRoutineScene extends StandardScene{
         calculateSteps.setOnAction(actionEvent -> {
             try {
                 int a = Integer.parseInt(steps.getText());
-                dailyRoutineController.testOneNumber(a);
+                masterController.getDailyRoutineController().testOneNumber(a);
                 stepsError.setText("Berechnung erfolgreich");
-                dailyRoutineController.callCalculateSteps(a, masterController);
+                masterController.getDailyRoutineController().callCalculateSteps(a);
                 updateFreeCalories();
             }catch(NumberFormatException e){
                 stepsError.setText("Du musst eine Zahl eingeben, um die Kalorien berechnen zu lassen");
@@ -338,17 +335,19 @@ public class DailyRoutineScene extends StandardScene{
                     testSuccessful = false;
                 }
             }
+            /**
             for (Integer s : choiceBoxesHours){
                 System.out.println(s);
             }
             for (Integer s : choiceBoxesMinutes){
                 System.out.println(s);
             }
+            */
             for (int i = 0; i < checkBoxes.size(); i++){
                 if(checkBoxes.get(i).isSelected()) {
                     minimumOneChosen = true;
                     try {
-                        dailyRoutineController.activityTest(choiceBoxesHours.get(i), choiceBoxesMinutes.get(i));
+                        masterController.getDailyRoutineController().activityTest(choiceBoxesHours.get(i), choiceBoxesMinutes.get(i));
                     }catch(IndexOutOfBoundsException e){
                         e.printStackTrace();
                     }catch (NoSenseException e) {
@@ -364,11 +363,11 @@ public class DailyRoutineScene extends StandardScene{
             }else if(testSuccessful){
                 for(int i = 0; i < checkBoxes.size(); i++){
                     if(checkBoxes.get(i).isSelected()){
-                        //dailyRoutineController.callCalculateActivity(checkBoxes.get(i).getText(),
-                                //Integer.parseInt(choiceBoxesHours.get(i)), Integer.parseInt(choiceBoxesMinutes.get(i)));
+                        masterController.getDailyRoutineController().callCalculateActivity(checkBoxes.get(i).getText(), choiceBoxesHours.get(i), choiceBoxesMinutes.get(i));
                     }
                 }
                 activityError.setText("Berechnung erfolgreich.");
+                updateFreeCalories();
             }
 
         });
@@ -377,14 +376,14 @@ public class DailyRoutineScene extends StandardScene{
 
             // Every generated checkbox and textfield for activities is added to an ArrayList
             ArrayList<CheckBox> checkBoxes = new ArrayList<>();
-            ArrayList<NumberTextField> textFields = new ArrayList<>();
+            ArrayList<TextField> textFields = new ArrayList<>();
             Iterator iteratorCheckBoxes = eatenCaloriesFoodList.getChildren().iterator();
             while(iteratorCheckBoxes.hasNext()){
                 checkBoxes.add((CheckBox)iteratorCheckBoxes.next());
             }
             Iterator iteratorTextFields = eatenCaloriesTextFieldList.getChildren().iterator();
             while (iteratorTextFields.hasNext()){
-                textFields.add((NumberTextField) iteratorTextFields.next());
+                textFields.add((TextField) iteratorTextFields.next());
             }
 
             // Calling a test method of DailyRoutineController to check, if the user's input is valid
@@ -395,7 +394,7 @@ public class DailyRoutineScene extends StandardScene{
                     minimumOneChosen = true;
                     try {
                         int a = Integer.parseInt(textFields.get(i).getText());
-                        dailyRoutineController.testOneNumber(a);
+                        masterController.getDailyRoutineController().testOneNumber(a);
                         eatenCaloriesError.setText("Berechnung erfolgreich");
                     }catch(NumberFormatException e){
                         testSuccessful = false;
@@ -411,7 +410,8 @@ public class DailyRoutineScene extends StandardScene{
             }else if(testSuccessful){
                 for(int i = 0; i < checkBoxes.size(); i++){
                     if(checkBoxes.get(i).isSelected()){
-                        //dailyRoutineController.callCalculateEatenCalories(checkBoxes.get(i).getText(), Integer.parseInt(textFields.get(i).getText()));
+                        masterController.getDailyRoutineController().callCalculateEatenCalories(checkBoxes.get(i).getText(), Integer.parseInt(textFields.get(i).getText()));
+                        updateFreeCalories();
                     }
                 }
                 eatenCaloriesError.setText("Berechnung erfolgreich.");
@@ -422,9 +422,10 @@ public class DailyRoutineScene extends StandardScene{
         calculateOwnCalories.setOnAction(actionEvent -> {
             try {
                 int a = Integer.parseInt(ownCalories.getText());
-                dailyRoutineController.testOneNumber(a);
+                masterController.getDailyRoutineController().testOneNumber(a);
                 ownCaloriesError.setText("Berechnung erfolgreich");
-                dailyRoutineController.callCalculateSteps(a, masterController);
+                masterController.getDailyRoutineController().callCalculateOwnCalories(a);
+                updateFreeCalories();
             }catch(NumberFormatException e){
                 ownCaloriesError.setText("Du musst eine Zahl eingeben, um die Kalorien berechnen zu lassen");
             }catch(NoSenseException e){
@@ -433,6 +434,7 @@ public class DailyRoutineScene extends StandardScene{
         });
 
         order.setOnAction(actionEvent -> {
+            this.masterController.getDailyRoutineController().callUpdateDiary();
             MenuCardScene menuCardScene = new MenuCardScene();
             menuCardScene.setScene(standardScene, masterController);
         });
@@ -442,7 +444,8 @@ public class DailyRoutineScene extends StandardScene{
         });
 
         editProfile.setOnAction(actionEvent -> {
-
+            profileEditScene = new ProfileEditScene();
+            profileEditScene.setScene(standardScene, masterController);
         });
 
         orderHistory.setOnAction(actionEvent -> {
@@ -456,7 +459,7 @@ public class DailyRoutineScene extends StandardScene{
     }
 
     private void updateFreeCalories() {
-        calories.setText("Du darfst noch Essen mit " + dailyRoutineController.getFreeCalories(masterController) + " Kalorien bestellen.");
+        calories.setText("Du darfst noch Essen mit " + masterController.getDailyRoutineController().getFreeCalories() + " Kalorien bestellen.");
     }
 
 }
