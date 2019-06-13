@@ -69,6 +69,7 @@ public class StartController{
         user.setIncompatibilities(incompatibilities);
         try {
             this.userManagement.updateUser(user);
+            this.masterController.getUser().setBasalMetabolism();
         }catch(Exception e){
             e.printStackTrace();
         }
