@@ -58,7 +58,7 @@ public class ProfileEditScene{
 
         forenameLabel = new Label("Vorname:");
 
-        final Pattern namePattern = Pattern.compile("^(|[A-Z][a-z]*)");
+        final Pattern namePattern = Pattern.compile("(^$|^([A-Za-zäÄöÖüÜß]+[ -]?)*)");
 
         TextFormatter<?> forenameFormatter = new TextFormatter<>(change -> {
             if(namePattern.matcher(change.getControlNewText()).matches()) {
@@ -103,7 +103,7 @@ public class ProfileEditScene{
 
         streetError = new ErrorLabel();
 
-        Pattern streetNamePattern = Pattern.compile("^(|[A-Z][a-z]*\\.?)");
+        Pattern streetNamePattern = Pattern.compile("(^$|^([A-Za-zäÄöÖüÜß]+[ -]?)*[.]?)");
 
         TextFormatter<?> streetNameFormatter = new TextFormatter<>(change -> {
             if(streetNamePattern.matcher(change.getControlNewText()).matches()) {
