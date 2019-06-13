@@ -435,6 +435,7 @@ public class DailyRoutineScene extends StandardScene{
 
         order.setOnAction(actionEvent -> {
             this.masterController.getDailyRoutineController().callUpdateDiary();
+            this.masterController.getOrderController().setAvailableCalories(this.masterController.getDailyRoutineController().getFreeCalories());
             MenuCardScene menuCardScene = new MenuCardScene();
             menuCardScene.setScene(standardScene, masterController);
         });

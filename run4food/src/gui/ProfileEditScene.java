@@ -24,7 +24,7 @@ public class ProfileEditScene{
             postcodeTextField, phoneTextField, ageTextField, weightTextField, heightTextField;
     private Button editCancel, editSave, deleteProfile;
     private VBox contentVBox;
-    private HBox nicknameHBox, nameHBox, streetHBox, cityHBox, phoneHBox, ageHBox, gender, heightHBox, weightHBox, preferedFoodHBox, incompatibilityHBox, editButtons;
+    private HBox nicknameHBox, nameHBox, streetHBox, cityHBox, phoneHBox, ageHBox, gender, heightHBox, weightHBox, preferedFoodHBox, incompatibilityHBox, hBoxForVBox, editButtons;
     private ErrorLabel nameError, streetError, cityError, phoneError, ageError, heightError, weightError;
     CheckBox gluten, wheat, lactose;
     RadioButton veggie, vegan, eatAll, male, female;
@@ -44,6 +44,7 @@ public class ProfileEditScene{
         nicknameLabel = new Label("Nickname:");
 
         nickname = new TextField(this.masterController.getNickname());
+        nickname.setDisable(true);
         nickname.setMinHeight(35);
         nickname.setMinWidth(200);
         nickname.setFont(Font.font("Calibri", 20));
@@ -396,10 +397,14 @@ public class ProfileEditScene{
         contentVBox.getChildren().addAll(nicknameHBox, nameHBox, streetHBox, cityHBox, phoneHBox, ageHBox, genderLabel,
                 gender, heightHBox, weightHBox, preferedFoodLabel, preferedFoodHBox, incompatibilityLabel, incompatibilityHBox);
 
+        hBoxForVBox = new HBox();
+        hBoxForVBox.setAlignment(Pos.CENTER);
+        hBoxForVBox.getChildren().add(contentVBox);
+
         scrollPane = new ScrollPane();
         scrollPane.setPannable(true);
         scrollPane.setFitToWidth(true);
-        scrollPane.setContent(contentVBox);
+        scrollPane.setContent(hBoxForVBox);
 
         editCancel = new Button("Abbrechen");
         editCancel.setFont(Font.font("Calibri", FontWeight.BOLD, 25));
@@ -465,7 +470,7 @@ public class ProfileEditScene{
             if(wheat.isSelected()){
                 incompatibilities.add("Weizen");
             }
-            this.masterController.getStartController().callSaveUser(nick, forename, surname, street, streetNumber, postCode, city, phone, age, gender, height, weight, preferedFood, incompatibilities);
+            this.masterController.getStartController().callUpdateUser(nick, forename, surname, street, streetNumber, postCode, city, phone, age, gender, height, weight, preferedFood, incompatibilities);
             this.dailyRoutineScene = new DailyRoutineScene();
             this.dailyRoutineScene.setScene(this.standardScene, this.masterController);
         });
