@@ -49,6 +49,31 @@ public class StartController{
         this.masterController.getDailyRoutineController().createDailyRoutine();
     }
 
+    public void callUpdateUser(String nick, String forename, String surname, String streetName, int streetNumber,
+                               int postcode, String city, int phone, int age, String gender, int height, int weight,
+                               String preferedFood, ArrayList<String> incompatibilities){
+        RegisteredUser user = (RegisteredUser) this.masterController.getUser();
+        //user.setUserId(nick);
+        user.setFirstname(forename);
+        user.setSurname(surname);
+        user.setStreet(streetName);
+        user.setStreetNumber(streetNumber);
+        user.setPostCode(postcode);
+        user.setCity(city);
+        user.setPhone(phone);
+        user.setAge(age);
+        user.setGender(gender);
+        user.setHeight(height);
+        user.setWeight(weight);
+        user.setPreferedFood(preferedFood);
+        user.setIncompatibilities(incompatibilities);
+        try {
+            this.userManagement.updateUser(user);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public ArrayList<String> loadNicknames(){
         try {
             registeredUsers = this.userManagement.loadListe();

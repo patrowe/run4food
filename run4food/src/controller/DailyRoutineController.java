@@ -36,17 +36,15 @@ public class DailyRoutineController {
         this.dailyRoutine.calculateOwnCalorie(ownCalories);
     }
 
-    public String getFreeCalories(){
+    public int getFreeCalories(){
         this.dailyRoutine.calculateFreeCalorie();
-        int freeCalories =  this.dailyRoutine.getFreeCalorie();
-        return String.valueOf(freeCalories);
+        return this.dailyRoutine.getFreeCalorie();
     }
 
     public void testOneNumber(int a) throws NoSenseException {
         if(a==0){
             throw new NoSenseException("Du musst eine Zahl über Null eingeben, damit die Kalorien berechnet werden");
         }
-
     }
 
     public void activityTest(int a, int b) throws NoSenseException{
@@ -59,8 +57,7 @@ public class DailyRoutineController {
     public void callUpdateDiary(){
         dailyRoutine.updateDiary();
         RegisteredUser regUser = (RegisteredUser)this.masterController.getUser();
-        Hashtable a=regUser.getDiary();
-        System.out.println("test" + a.get(0));
+        Hashtable a = regUser.getDiary();
     }
 
 

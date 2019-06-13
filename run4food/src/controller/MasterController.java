@@ -2,7 +2,6 @@ package controller;
 
 import run4food.RegisteredUser;
 import run4food.User;
-import run4food.UserManagement;
 
 public class MasterController {
 
