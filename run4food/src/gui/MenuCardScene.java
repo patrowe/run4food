@@ -11,7 +11,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.regex.Pattern;
 
 /**
  * @author Christoph Klassen
@@ -23,11 +22,13 @@ public class MenuCardScene extends StandardScene{
     private BorderPane borderPane;
     private ScrollPane scrollPane;
     private HBox informationHBox, nameAndFilterHBox, menuCardHBox, navigationHBox;
-    private VBox sceneContent, nameVBox, caloriesVBox, priceVBox, quantityVBox, addButtonsVBox;
-    private Button sortName, sortPrice, sortCalories, addToCart, goBackToDaily, goToShoppingCart;
-    private Label heading, nameLabel, caloriesLabel, priceLabel, shoppingCartLabel;
+    private VBox sceneContent, nameVBox, caloriesVBox, priceVBox, quantityVBox;
+    private Button sortName, sortPrice, sortCalories, addToCart, backToMenu, goBackToDaily, goToShoppingCart;
+    private Label heading, freeCalories, shoppingCartLabel;
     private ArrayList<String> dishNames, dishCalories, dishPrices;
     private MasterController masterController;
+    private StandardScene standardScene;
+    private boolean somebodyIsLoggedIn;
 
     //Attribute für die Warenkorb-Vorschau
 
@@ -38,16 +39,24 @@ public class MenuCardScene extends StandardScene{
     public void setScene(StandardScene standardScene, MasterController masterController){
 
         this.masterController = masterController;
+        this.standardScene = standardScene;
+        if(this.masterController.getUser() == null){
+            this.somebodyIsLoggedIn = false;
+        }else{
+            this.somebodyIsLoggedIn = true;
+        }
 
         heading = new Label("Dash Board");
         heading.setFont(Font.font("Calibri", FontWeight.THIN, 40));
         heading.setMinHeight(100);
         heading.setPadding(new Insets(10));
 
-        Label freeCalories = new Label("Verfügbare Kalorien: " + this.masterController.getOrderController().getAvailableCalories());
+        if(somebodyIsLoggedIn) {
+            freeCalories = new Label("Verfügbare Kalorien: " + this.masterController.getOrderController().getAvailableCalories());
 
-        informationHBox = new HBox();
-        informationHBox.getChildren().add(freeCalories);
+            informationHBox = new HBox();
+            informationHBox.getChildren().add(freeCalories);
+        }
 
         /*
         nameLabel = new Label("Name des Gerichts");
@@ -67,7 +76,6 @@ public class MenuCardScene extends StandardScene{
         priceLabel.setFont(Font.font("Calibri", FontWeight.BOLD,16));
         priceLabel.setMinHeight(30);
         priceLabel.setMinWidth(120);
-
          */
 
         sortName = new Button("Gericht");
@@ -100,7 +108,11 @@ public class MenuCardScene extends StandardScene{
         menuCardHBox.setSpacing(10);
         menuCardHBox.getChildren().addAll(nameVBox, caloriesVBox, priceVBox, quantityVBox);
 
-        this.updateMenuCard();
+        if(somebodyIsLoggedIn) {
+            this.updateMenuCardForLoggedIn();
+        }else{
+            this.updateMenuCardForNotLoggedIn();
+        }
 
         scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
@@ -123,7 +135,12 @@ public class MenuCardScene extends StandardScene{
         sceneContent = new VBox();
         sceneContent.setSpacing(10);
         sceneContent.setFillWidth(true);
-        sceneContent.getChildren().addAll(informationHBox, hBox);
+
+        if(somebodyIsLoggedIn) {
+            sceneContent.getChildren().addAll(informationHBox, hBox);
+        }else{
+            sceneContent.getChildren().addAll(hBox);
+        }
 
         //Hier kommt der Teil für die Warenkorb-Vorschau
 
@@ -151,14 +168,21 @@ public class MenuCardScene extends StandardScene{
 
         //Hier werden die Buttons für die Navigation erstellt
 
-        goBackToDaily = new NavigationButton("Zurück zum Dash Board");
         goToShoppingCart = new NavigationButton("Weiter zum Warenkorb");
+        goBackToDaily = new NavigationButton("Zurück zum Dash Board");
+        backToMenu = new NavigationButton("Zurück zum Hauptmenü");
 
         navigationHBox = new HBox();
         navigationHBox.setAlignment(Pos.CENTER);
         navigationHBox.setSpacing(10);
         navigationHBox.setMinHeight(75);
-        navigationHBox.getChildren().addAll(goBackToDaily, goToShoppingCart);
+
+        if(somebodyIsLoggedIn){
+            navigationHBox.getChildren().addAll(goBackToDaily, goToShoppingCart);
+        }else{
+            navigationHBox.getChildren().addAll(backToMenu, goToShoppingCart);
+        }
+
 
         borderPane = new BorderPane();
         borderPane.setTop(heading);
@@ -174,22 +198,27 @@ public class MenuCardScene extends StandardScene{
 
         sortName.setOnAction(actionEvent -> {
             this.masterController.getOrderController().SortByName();
-            this.updateMenuCard();
+            this.updateMenuCardForLoggedIn();
         });
 
         sortCalories.setOnAction(actionEvent -> {
             this.masterController.getOrderController().SortByCalories();
-            this.updateMenuCard();
+            this.updateMenuCardForLoggedIn();
         });
 
         sortPrice.setOnAction(actionEvent -> {
             this.masterController.getOrderController().SortByPrice();
-            this.updateMenuCard();
+            this.updateMenuCardForLoggedIn();
         });
 
         goBackToDaily.setOnAction(actionEvent -> {
             DailyRoutineScene dailyRoutineScene = new DailyRoutineScene();
-            dailyRoutineScene.setScene(standardScene, masterController);
+            dailyRoutineScene.setScene(this.standardScene, this.masterController);
+        });
+
+        backToMenu.setOnAction(actionEvent -> {
+            MainMenuScene mainMenuScene = new MainMenuScene();
+            mainMenuScene.setScene(this.standardScene, this.masterController);
         });
 
         goToShoppingCart.setOnAction(actionEvent -> {
@@ -201,19 +230,23 @@ public class MenuCardScene extends StandardScene{
             int index = 0;
             while(iterator.hasNext()){
                 OrderTextfield orderTextfield = (OrderTextfield) iterator.next();
-                System.out.println("Inhalt des Textfelds: " + orderTextfield.getText());
                 if(!(orderTextfield.getText().equals(""))){
                     try {
                         int quantity = Integer.parseInt(((OrderTextfield) quantityVBox.getChildren().get(index)).getText());
                         this.masterController.getOrderController().callChangeCart(index, quantity);
+                        freeCalories.setText("Verfügbare Kalorien: " + this.masterController.getOrderController().getAvailableCalories());
                         this.updateLocalShoppingCart();
-                        System.out.println("Index und Anzahl: " + index + "" + quantity);
                     }catch(NumberFormatException e){
                         e.printStackTrace();
                     }
 
                 }
                 index++;
+            }
+            if(somebodyIsLoggedIn){
+                this.updateMenuCardForLoggedIn();
+            }else{
+                this.updateMenuCardForNotLoggedIn();
             }
         });
 
@@ -225,7 +258,7 @@ public class MenuCardScene extends StandardScene{
     /**
      * Die Methode erneuert die Menükarte mit der jeweils aktuellen Liste an Dishes
      */
-    private void updateMenuCard(){
+    private void updateMenuCardForNotLoggedIn(){
         dishNames = this.masterController.getOrderController().loadDishNames();
         nameVBox.getChildren().clear();
         quantityVBox.getChildren().clear();
@@ -248,6 +281,33 @@ public class MenuCardScene extends StandardScene{
         }
     }
 
+    private void updateMenuCardForLoggedIn(){
+        ArrayList<Boolean> dishAvailability = this.masterController.getOrderController().loadDishAvailability();
+        dishNames = this.masterController.getOrderController().loadDishNames();
+        dishCalories = masterController.getOrderController().loadDishCalories();
+        dishPrices = masterController.getOrderController().loadDishPrices();
+
+        nameVBox.getChildren().clear();
+        quantityVBox.getChildren().clear();
+        caloriesVBox.getChildren().clear();
+        priceVBox.getChildren().clear();
+
+        for(int i = 0; i < dishAvailability.size(); i++){
+            System.out.println(dishAvailability.get(i));
+            if(dishAvailability.get(i)){
+                nameVBox.getChildren().add(new DishLabel(dishNames.get(i)));
+                quantityVBox.getChildren().add(new OrderTextfield(""));
+                caloriesVBox.getChildren().add(new DishLabel(dishCalories.get(i)));
+                priceVBox.getChildren().add(new DishLabel(dishPrices.get(i)));
+            }else{
+                nameVBox.getChildren().add(new DishLabel(dishNames.get(i), false));
+                quantityVBox.getChildren().add(new OrderTextfield("", false));
+                caloriesVBox.getChildren().add(new DishLabel(dishCalories.get(i), false));
+                priceVBox.getChildren().add(new DishLabel(dishPrices.get(i), false));
+            }
+        }
+    }
+
     private void updateLocalShoppingCart(){
         nameListVBox.getChildren().clear();
         quantityListVBox.getChildren().clear();
@@ -263,29 +323,4 @@ public class MenuCardScene extends StandardScene{
             quantityListVBox.getChildren().add(new OrderTextfield(String.valueOf(quantityList.get(i))));
         }
     }
-
-
 }
-
-/*
-    void handleCheckBoxEvent(CheckBox checkBox) {
-        Iterator iterator = nameVBox.getChildren().iterator();
-        if (checkBox.isSelected()) {
-            while (iterator.hasNext()) {
-                if (!(iterator.next().equals(checkBox))) {
-                    CheckBox box = (CheckBox) iterator.next();
-                    box.setDisable(true);
-                }
-            }
-        } else {
-            while (iterator.hasNext()) {
-                if (!(iterator.next().equals(checkBox))) {
-                    CheckBox box = (CheckBox) iterator.next();
-                    box.setDisable(false);
-                }
-
-
-            }
-        }
-    }
- */

@@ -19,4 +19,18 @@ public class OrderTextfield extends TextField {
             }
         }));
     }
+
+    public OrderTextfield(String text, boolean b){
+        this.setText(text);
+        this.setTextFormatter(new TextFormatter<>(change -> {
+            if(quantityPattern.matcher(change.getControlNewText()).matches()) {
+                return change;
+            }else{
+                return null;
+            }
+        }));
+        if(!(b)){
+            setDisable(true);
+        }
+    }
 }
