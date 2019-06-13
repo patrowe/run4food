@@ -15,6 +15,7 @@ import javafx.scene.text.FontWeight;
 import run4food.Lexicon;
 import java.text.DateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 public class DailyRoutineScene extends StandardScene{
@@ -25,7 +26,7 @@ public class DailyRoutineScene extends StandardScene{
     private ErrorLabel stepsError, ownCaloriesError, eatenCaloriesError;
     private String dateAsString;
     private TextField steps, ownCalories;
-    private Button calculateSteps, calculateActivities, calculateEatenCalories, calculateOwnCalories, order, backToMenu, editProfile, orderHistory, weekOverview;
+    private Button calculateSteps, calculateActivities, calculateEatenCalories, calculateOwnCalories, order, backToMenu, editProfile, weekOverview;
     private VBox vBox, eatenCaloriesFoodList, eatenCaloriesTextFieldList, activityList, activityDurationHoursList, activityDurationMinutesList, activityTitledPaneContent;
     private HBox dateHBox, stepsHBox, activityHBox, activityLabelHBox, activityUIElementHbox, eatenCaloriesHBox, eatenCaloriesUIElementHBox, ownCaloriesHBox, navigationHBox;
     private ScrollPane scrollPane;
@@ -76,9 +77,22 @@ public class DailyRoutineScene extends StandardScene{
         stepsLabel.setFont(Font.font("Calibri", 15));
         stepsLabel.setMinHeight(50);
 
+        final Pattern stepsPattern = Pattern.compile("\\d{0,6}");
+
+        TextFormatter stepsFormatter = new TextFormatter<>(change -> {
+            if(stepsPattern.matcher(change.getControlNewText()).matches()) {
+                stepsError.setText("");
+                return change;
+            }else{
+                stepsError.setText("Failed");
+                return null;
+            }
+        });
+
         steps = new TextField();
         steps.setMinHeight(25);
         steps.setMaxWidth(60);
+        steps.setTextFormatter(stepsFormatter);
         steps.setFont(Font.font("Calibri", 12));
 
         calculateSteps = new Button("Berechnen");
@@ -95,7 +109,7 @@ public class DailyRoutineScene extends StandardScene{
         stepsHBox.setAlignment(Pos.CENTER);
         stepsHBox.setSpacing(20);
 
-        activityExplanation = new Label("Hier kannst du deine Aktivitäten und die Zeitdauer festlegen, damit ein " +
+        activityExplanation = new Label("Hier kannst du deine Aktivitäten und die Zeitdauer festlegen, \ndamit ein " +
                 "Kalorienrechner dir automatisch die Kalorien zu deinem Grundumsatz dazurechnet.");
         activityExplanation.setFont(Font.font("Calibri", 25));
         activityExplanation.setMinHeight(50);
@@ -169,7 +183,8 @@ public class DailyRoutineScene extends StandardScene{
         activityUIElementHbox.setAlignment(Pos.CENTER);
         activityUIElementHbox.setSpacing(20);
 
-        eatenCaloriesText = new Label("Wenn du schon etwas gegessen hast, kannst du hier die Lebensmittel aussuchen, die du schon verzehrt hast.");
+        eatenCaloriesText = new Label("Wenn du schon etwas gegessen hast, kannst du hier die Lebensmittel aussuchen, die du schon verzehrt hast.\nDabei wird mit 100g pro Portion gerechnet.");
+        eatenCaloriesText.setAlignment(Pos.CENTER);
         eatenCaloriesText.setFont(Font.font("Calibri", 25));
         eatenCaloriesText.setMinHeight(50);
 
@@ -216,10 +231,23 @@ public class DailyRoutineScene extends StandardScene{
         ownCaloriesLabel.setFont(Font.font("Calibri", 15));
         ownCaloriesLabel.setMinHeight(50);
 
+        final Pattern ownCaloriesPattern = Pattern.compile("\\d{0,5}");
+
+        TextFormatter ownCaloriesFormatter = new TextFormatter<>(change -> {
+            if(ownCaloriesPattern.matcher(change.getControlNewText()).matches()) {
+                ownCaloriesError.setText("");
+                return change;
+            }else{
+                ownCaloriesError.setText("Failed");
+                return null;
+            }
+        });
+
         ownCalories = new TextField();
         ownCalories.setMinHeight(25);
-        ownCalories.setMaxWidth(40);
+        ownCalories.setMaxWidth(50);
         ownCalories.setFont(Font.font("Calibri", 12));
+        ownCalories.setTextFormatter(ownCaloriesFormatter);
 
         calculateOwnCalories = new Button("Berechnen");
         calculateOwnCalories.setMinHeight(25);
@@ -250,9 +278,6 @@ public class DailyRoutineScene extends StandardScene{
         editProfile = new Button("Profil ändern");
         editProfile.setFont(Font.font("Calibri", FontWeight.BOLD, 25));
 
-        orderHistory = new Button("Bestellübersicht");
-        orderHistory.setFont(Font.font("Calibri", FontWeight.BOLD, 25));
-
         weekOverview = new Button("Wochenübersicht");
         weekOverview.setFont(Font.font("Calibri", FontWeight.BOLD, 25));
 
@@ -270,7 +295,7 @@ public class DailyRoutineScene extends StandardScene{
         navigationHBox.setAlignment(Pos.CENTER);
         navigationHBox.setSpacing(10);
         navigationHBox.setMinHeight(75);
-        navigationHBox.getChildren().addAll(order, backToMenu, editProfile, orderHistory, weekOverview);
+        navigationHBox.getChildren().addAll(order, backToMenu, editProfile, weekOverview);
 
         borderpane = new BorderPane();
         borderpane.setTop(heading);
@@ -447,10 +472,6 @@ public class DailyRoutineScene extends StandardScene{
         editProfile.setOnAction(actionEvent -> {
             profileEditScene = new ProfileEditScene();
             profileEditScene.setScene(standardScene, masterController);
-        });
-
-        orderHistory.setOnAction(actionEvent -> {
-
         });
 
         weekOverview.setOnAction(actionEvent -> {
