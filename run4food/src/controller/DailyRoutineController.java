@@ -3,7 +3,7 @@ package controller;
 import run4food.DailyRoutine;
 import run4food.RegisteredUser;
 
-import java.util.Hashtable;
+import java.util.TreeMap;
 
 public class DailyRoutineController {
 
@@ -20,6 +20,7 @@ public class DailyRoutineController {
 
     public void callCalculateSteps(int steps){
         this.dailyRoutine.calculateSteps(steps);
+        this.dailyRoutine.updateDiary();
     }
 
     public void callCalculateActivity(String activity, int durationHours, int durationMintues){
@@ -30,10 +31,12 @@ public class DailyRoutineController {
     public void callCalculateEatenCalories(String food, int quantity){
         this.dailyRoutine.calculateConsumption(food, quantity);
         this.dailyRoutine.calculateFreeCalorie();
+        this.dailyRoutine.updateDiary();
     }
 
     public void callCalculateOwnCalories(int ownCalories){
         this.dailyRoutine.calculateOwnCalorie(ownCalories);
+        this.dailyRoutine.updateDiary();
     }
 
     public int getFreeCalories(){
@@ -56,10 +59,16 @@ public class DailyRoutineController {
 
     public void callUpdateDiary(){
         dailyRoutine.updateDiary();
+        // brauchen wir das noch?
+        
         RegisteredUser regUser = (RegisteredUser)this.masterController.getUser();
-        Hashtable a = regUser.getDiary();
+        TreeMap a = regUser.getDiary();
     }
 
+    public TreeMap<String,Integer[]> getDiary()
+    {
+        return ((RegisteredUser)masterController.getUser()).getDiary();
+    }
 
 }
 
