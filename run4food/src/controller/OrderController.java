@@ -52,6 +52,12 @@ public class OrderController {
         return availableCalories;
     }
 
+    public void deleteShoppingCart(){
+        this.shoppingcart = null;
+        shoppingcart = new Shoppingcart();
+        this.actualShoppingCart = null;
+    }
+
     /**
      * Holt die Unverträglichkeiten aus dem aktuellen User und übergibt sie der Klasse MenuCard. Im Gegenzug bekommt
      * die Methode eine gefilterte Liste aller Dishes.
@@ -172,15 +178,23 @@ public class OrderController {
     }
 
     /**
-     * @param index: Der Index steht für die Stelle, an der sich ein Dish im Array dishes befindet
+     * @param name: Das ist der Name des Dish, das dem Warenkorb hinzugefügt werden soll
      * @param quantity: Das ist die Anzahl des Dish, das dem Warenkorb hinzugefügt werden soll
      */
-    public void callChangeCart(int index, int quantity){
-        this.shoppingcart.changeCart(this.dishes.get(index), quantity);
-        this.actualShoppingCart = this.shoppingcart.getOrder();
-        if(this.masterController.getUser() != null) {
-            this.setAvailableCalories((this.getFreeCalories() - this.shoppingcart.getCalCount()));
+    public void callChangeCart(String name, int quantity){
+        Dishes dish;
+        for(int i = 0; i < this.dishes.size(); i++){
+            if(this.dishes.get(i).getName().equals(name)){
+                dish = this.dishes.get(i);
+                this.shoppingcart.changeCart(dish, quantity);
+                this.actualShoppingCart = this.shoppingcart.getOrder();
+                if(this.masterController.getUser() != null) {
+                    this.setAvailableCalories((this.getFreeCalories() - this.shoppingcart.getCalCount()));
+                }
+                break;
+            }
         }
+
     }
 
     /**
