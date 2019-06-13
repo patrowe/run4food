@@ -14,9 +14,10 @@ public class OrderController {
     private ArrayList<Dishes> dishes;
     private HashMap<Dishes, Integer> actualShoppingCart;
     private MasterController masterController;
+    private int freeCalories;
     private int availableCalories;
 
-    public OrderController(MasterController masterController) {
+    OrderController(MasterController masterController) {
         this.masterController = masterController;
         this.shoppingcart = new Shoppingcart();
         this.menuCard = new MenuCard();
@@ -35,7 +36,15 @@ public class OrderController {
     // 4: Vegan
     // 5: Weizen
 
-    public void setAvailableCalories(int calories){
+    public void setFreeCalories(int calories){
+        this.freeCalories = calories;
+    }
+
+    public int getFreeCalories() {
+        return freeCalories;
+    }
+
+    public void setAvailableCalories(int calories) {
         this.availableCalories = calories;
     }
 
@@ -43,6 +52,10 @@ public class OrderController {
         return availableCalories;
     }
 
+    /**
+     * Holt die Unverträglichkeiten aus dem aktuellen User und übergibt sie der Klasse MenuCard. Im Gegenzug bekommt
+     * die Methode eine gefilterte Liste aller Dishes.
+     */
     public void loadDishes(){
         ArrayList<Integer> numbers = new ArrayList<>();
             for(String s : this.masterController.getUser().getIncompatibilities()){
@@ -70,6 +83,9 @@ public class OrderController {
             }
         }
 
+    /**
+     * @return: Eine Liste der Namen aller Dishes in der Speisekarte.
+     */
     public ArrayList<String> loadDishNames(){
         ArrayList<String> dishNames = new ArrayList<>();
         for(Dishes dish : this.dishes){
@@ -86,6 +102,10 @@ public class OrderController {
         return dishCategories;
     }
 */
+
+    /**
+     * @return: Eine Liste der Kalorien aller Dishes in der Speisekarte.
+     */
     public ArrayList<String> loadDishCalories(){
         ArrayList<String> dishCalories = new ArrayList<>();
         for(Dishes dish : this.dishes){
@@ -93,6 +113,10 @@ public class OrderController {
         }
         return dishCalories;
     }
+
+    /**
+     * @return: Eine Liste der Preise aller Dishes in der Speisekarte.
+     */
     public ArrayList<String> loadDishPrices(){
         ArrayList<String> dishPrices = new ArrayList<>();
         for(Dishes dish : this.dishes){
@@ -101,6 +125,22 @@ public class OrderController {
         return dishPrices;
     }
 
+    public ArrayList<Boolean> loadDishAvailability(){
+        ArrayList<Boolean> dishAvailability = new ArrayList<>();
+        for(Dishes dish : this.dishes){
+            if(dish.getCal() < availableCalories){
+                dishAvailability.add(true);
+            }else{
+                dishAvailability.add(false);
+            }
+
+        }
+        return dishAvailability;
+    }
+
+    /**
+     * Diese Methode übergibt die aktuelle Speisekarte an ein Objekt der Klasse MenuCard und lässt diese nach Namen sortieren.
+     */
     public void SortByName(){
         try {
             this.dishes = menuCard.sortCard(this.dishes, 3);
@@ -109,6 +149,9 @@ public class OrderController {
         }
     }
 
+    /**
+     * Diese Methode übergibt die aktuelle Speisekarte an ein Objekt der Klasse MenuCard und lässt diese nach Kalorien sortieren.
+     */
     public void SortByCalories(){
         try {
             this.dishes = menuCard.sortCard(this.dishes, 2);
@@ -117,6 +160,9 @@ public class OrderController {
         }
     }
 
+    /**
+     * Diese Methode übergibt die aktuelle Speisekarte an ein Objekt der Klasse MenuCard und lässt diese nach Preisen sortieren.
+     */
     public void SortByPrice(){
         try {
             this.dishes = menuCard.sortCard(this.dishes, 1);
@@ -125,12 +171,21 @@ public class OrderController {
         }
     }
 
+    /**
+     * @param index: Der Index steht für die Stelle, an der sich ein Dish im Array dishes befindet
+     * @param quantity: Das ist die Anzahl des Dish, das dem Warenkorb hinzugefügt werden soll
+     */
     public void callChangeCart(int index, int quantity){
         this.shoppingcart.changeCart(this.dishes.get(index), quantity);
         this.actualShoppingCart = this.shoppingcart.getOrder();
-        Iterator it = this.actualShoppingCart.keySet().iterator();
+        if(this.masterController.getUser() != null) {
+            this.setAvailableCalories((this.getFreeCalories() - this.shoppingcart.getCalCount()));
+        }
     }
 
+    /**
+     * @return: Eine Liste der Namen aller Dishes im Warenkorb.
+     */
     public ArrayList<String> getNameList() {
         Iterator iterator = this.actualShoppingCart.keySet().iterator();
         ArrayList<String> nameList = new ArrayList<>();
@@ -140,6 +195,9 @@ public class OrderController {
         return nameList;
     }
 
+    /**
+     * @return: Eine Liste der Preise aller Dishes im Warenkorb.
+     */
     public ArrayList<String> getPriceList() {
         Iterator iterator = this.actualShoppingCart.keySet().iterator();
         ArrayList<String> priceList = new ArrayList<>();
@@ -149,6 +207,9 @@ public class OrderController {
         return priceList;
     }
 
+    /**
+     * @return: Eine Liste der Anzahlen aller Dishes im Warenkorb.
+     */
     public ArrayList<Integer> getQuantityList() {
         Iterator iterator = this.actualShoppingCart.values().iterator();
         ArrayList<Integer> quantityList = new ArrayList<>();
