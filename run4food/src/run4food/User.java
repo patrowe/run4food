@@ -36,7 +36,8 @@ public class User implements Serializable{
 		this.gender = gender;
 		this.preferedFood = preferedFood;
 		this.incompatibilities = incompatibilities;
-		this.setBasalMetabolism();
+		Calculator c = new Calculator();
+		setBasalMetabolism(c.basalMetabolism(age,weight,height,gender));
 	}
 
 	public void setSurname (String surname){
@@ -99,9 +100,8 @@ public class User implements Serializable{
 		this.gender = gender;
 	}
 
-	public void setBasalMetabolism() {
-		Calculator c = new Calculator();
-		this.basalMetabolism = c.basalMetabolism(this.age,this.weight,this.height,this.gender);
+	public void setBasalMetabolism(int basal) {
+		this.basalMetabolism = basal;
 	}
 
 	public int getBasalMetabolism() {
