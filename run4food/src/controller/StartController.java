@@ -1,5 +1,6 @@
 package controller;
 
+import run4food.Calculator;
 import run4food.RegisteredUser;
 import run4food.User;
 import run4food.UserManagement;
@@ -18,10 +19,12 @@ public class StartController{
     private ArrayList<String> nickList;
     private MasterController masterController;
     private UserManagement userManagement;
+    private Calculator calc;
 
     public StartController(MasterController masterController){
         this.masterController = masterController;
         this.userManagement = new UserManagement();
+        calc = new Calculator();
     }
 
     /**
@@ -34,6 +37,7 @@ public class StartController{
         try {
             RegisteredUser registeredUser = new RegisteredUser(nick, surname, forename, streetName, streetNumber,
                     postcode, city, phone, age, gender, height, weight, preferedFood, incompatibilities);
+            registeredUser.setBasalMetabolism(calc.basalMetabolism(age, weight, height, gender));
             this.userManagement.saveUser(registeredUser);
             masterController.setUser(registeredUser);
             this.masterController.getDailyRoutineController().createDailyRoutine();
@@ -45,6 +49,7 @@ public class StartController{
     public void saveGuest(String forename, String surname, String street, int streetNumber, int postCode, String city,
                           int phone, int age, String gender, int height, int weight, String preferedFood, ArrayList<String>incompatibilities){
         User user = new User(forename, surname, street, streetNumber, postCode, city, phone, age, gender, height, weight, preferedFood, incompatibilities);
+        user.setBasalMetabolism(calc.basalMetabolism(age, weight, height, gender));
         masterController.setUser(user);
         this.masterController.getDailyRoutineController().createDailyRoutine();
     }
@@ -67,9 +72,10 @@ public class StartController{
         user.setWeight(weight);
         user.setPreferedFood(preferedFood);
         user.setIncompatibilities(incompatibilities);
+        user.setBasalMetabolism(calc.basalMetabolism(age, weight, height, gender));
         try {
             this.userManagement.updateUser(user);
-            this.masterController.getUser().setBasalMetabolism();
+            
         }catch(Exception e){
             e.printStackTrace();
         }
