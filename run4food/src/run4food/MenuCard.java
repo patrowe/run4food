@@ -9,7 +9,9 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class MenuCard {
+public class MenuCard implements Menu {
+	
+	
 	private File f = new File("MenuKarte.bin");
 	int auswahl = 1;
 	static final long serialVersionUID = 42L;
@@ -25,7 +27,7 @@ public class MenuCard {
 		this.writeFile(menu_list);
 	}
 
-	protected void writeFile(ArrayList<Dishes> dishlist) throws Exception {
+	public void writeFile(ArrayList<Dishes> dishlist) throws Exception {
 		// File wird geschrieben
 		FileOutputStream fos = new FileOutputStream(f);
 		BufferedOutputStream bus = new BufferedOutputStream(fos);
@@ -35,7 +37,7 @@ public class MenuCard {
 		this.oos.close();
 	}
 
-	protected void deleteDish(String name) throws Exception {
+	public void deleteDish(String name) throws Exception {
 		// liste wird geladen, index zum loeschen ermittelt, geloescht und erneut in
 		// File geschrieben
 		this.menu_list = this.loadCard();
